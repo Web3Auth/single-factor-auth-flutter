@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('SingleFactAuthFlutter Example'),
+          title: const Text('SingleFactorAuthFlutter Example'),
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -91,7 +91,7 @@ class _MyAppState extends State<MyApp> {
                       height: 10,
                     ),
                     const Text(
-                      'Welcome to SingleFactAuthFlutter Demo',
+                      'Welcome to SingleFactorAuthFlutter Demo',
                       style: TextStyle(fontSize: 14),
                     ),
                     const SizedBox(
@@ -107,6 +107,9 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                         onPressed: _torusKey(testnetTorusKey),
                         child: const Text('TestnetTorusKey')),
+                    ElevatedButton(
+                        onPressed: _torusKey(getAggregrateTorusKey),
+                        child: const Text('TestnetAggregateTorusKey')),
                     ElevatedButton(
                         onPressed: _torusKey(aquaTorusKey),
                         child: const Text('AquaTorusKey')),
@@ -132,7 +135,7 @@ class _MyAppState extends State<MyApp> {
       try {
         final String? response = await method();
         setState(() {
-          _result = response.toString();
+          _result = "Private Key : $response";
         });
       } on UserCancelledException {
         print("User cancelled.");
@@ -148,6 +151,15 @@ class _MyAppState extends State<MyApp> {
         verifier: 'torus-test-health',
         email: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us")));
+  }
+
+  Future<String?> getAggregrateTorusKey() {
+    return _singleFactAuthFlutterPlugin.getAggregateTorusKey(Web3AuthOptions(
+        network: TorusNetwork.testnet,
+        verifier: 'torus-test-health',
+        email: 'hello@tor.us',
+        idToken: Utils().es256Token("hello@tor.us"),
+        aggregateVerifier: 'torus-test-health-aggregate'));
   }
 
   Future<String?> aquaTorusKey() {

@@ -1,7 +1,6 @@
 package com.web3auth.single_fact_auth_flutter
 
 import android.content.Context
-import android.content.Intent
 import androidx.annotation.NonNull
 import com.github.web3auth.singlefactorauth.SingleFactorAuth
 import com.github.web3auth.singlefactorauth.types.LoginParams
@@ -12,11 +11,9 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.PluginRegistry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import org.torusresearch.fetchnodedetails.types.TorusNetwork
 import java.math.BigInteger
 
@@ -78,8 +75,28 @@ class SingleFactAuthFlutterPlugin: FlutterPlugin, MethodCallHandler {
                 singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
                 loginParams = LoginParams(
                     params.verifier, params.email,
+                    params.idToken)
+                val torusKeyCF = singleFactorAuth.getKey(loginParams)
+                torusKeyCF.join()
+                var privateKey = BigInteger.ZERO
+                torusKeyCF.whenComplete { key, error ->
+                    if (error == null) {
+                        privateKey = key.privateKey
+                    } else {
+                        throw Error(error)
+                    }
+                }
+                return privateKey.toString(16) ?: "error"
+            }
+            "getAggregateTorusKey" -> {
+                val initArgs = call.arguments<String>()
+                val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
+                singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network))
+                singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
+                loginParams = LoginParams(
+                    params.aggregateVerifier, params.email,
                     params.idToken,
-                    arrayOf(TorusSubVerifierInfo(params.email,
+                    arrayOf(TorusSubVerifierInfo(params.verifier,
                         params.idToken
                     )))
                 val torusKeyCF = singleFactorAuth.getKey(loginParams)
@@ -92,7 +109,7 @@ class SingleFactAuthFlutterPlugin: FlutterPlugin, MethodCallHandler {
                         throw Error(error)
                     }
                 }
-                return privateKey.toString(16)
+                return privateKey.toString(16) ?: "error"
             }
         }
         throw NotImplementedError()

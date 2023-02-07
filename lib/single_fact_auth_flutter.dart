@@ -31,4 +31,23 @@ class SingleFactAuthFlutter {
       }
     }
   }
+
+  Future<String?> getAggregateTorusKey(Web3AuthOptions web3authOptions) async {
+    try {
+      Map<String, dynamic> loginParamsJson = web3authOptions.toJson();
+      loginParamsJson.removeWhere((key, value) => value == null);
+      final String? privateKey = await _channel.invokeMethod(
+          'getAggregateTorusKey', jsonEncode(web3authOptions));
+      return privateKey;
+    } on PlatformException catch (e) {
+      switch (e.code) {
+        case "UserCancelledException":
+          throw UserCancelledException();
+        case "NoAllowedBrowserFoundException":
+          throw UnKnownException(e.message);
+        default:
+          rethrow;
+      }
+    }
+  }
 }

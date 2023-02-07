@@ -6,12 +6,14 @@ class Web3AuthOptions {
   final String verifier;
   final String email;
   final String idToken;
+  final String? aggregateVerifier;
 
   Web3AuthOptions({
     required this.network,
     required this.verifier,
     required this.email,
     required this.idToken,
+    this.aggregateVerifier,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class Web3AuthOptions {
       'verifier': verifier,
       'email': email,
       'idToken': idToken,
+      'aggregateVerifier': aggregateVerifier,
     };
   }
 }
@@ -43,10 +46,8 @@ class Utils {
       final jwt = JWT({
         "sub": "email|hello",
         "aud": "torus-key-test",
-        "exp": DateTime.now()
-            .add(const Duration(milliseconds: 3600000))
-            .toString(),
-        "iat": DateTime.now().toString(),
+        "exp": DateTime.now().millisecond,
+        "iat": DateTime.now().millisecond,
         "iss": "torus-key-test",
         "email": email,
         "nickname": email.split("@")[0],
