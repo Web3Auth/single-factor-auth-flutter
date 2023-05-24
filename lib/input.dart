@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
 class Web3AuthOptions {
-  final TorusNetwork network;
   final String verifier;
   final String email;
   final String idToken;
   final String? aggregateVerifier;
 
   Web3AuthOptions({
-    required this.network,
     required this.verifier,
     required this.email,
     required this.idToken,
@@ -18,11 +16,22 @@ class Web3AuthOptions {
 
   Map<String, dynamic> toJson() {
     return {
-      'network': network.name,
       'verifier': verifier,
       'email': email,
       'idToken': idToken,
       'aggregateVerifier': aggregateVerifier,
+    };
+  }
+}
+
+class Web3AuthNetwork {
+  final TorusNetwork network;
+
+  Web3AuthNetwork({required this.network});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'network': network.name,
     };
   }
 }

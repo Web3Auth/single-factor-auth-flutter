@@ -2,11 +2,11 @@ package com.web3auth.single_fact_auth_flutter
 
 import android.content.Context
 import androidx.annotation.NonNull
-import com.github.web3auth.singlefactorauth.SingleFactorAuth
-import com.github.web3auth.singlefactorauth.types.LoginParams
-import com.github.web3auth.singlefactorauth.types.SingleFactorAuthArgs
-import com.github.web3auth.singlefactorauth.types.TorusSubVerifierInfo
 import com.google.gson.Gson
+import com.web3auth.singlefactorauth.SingleFactorAuth
+import com.web3auth.singlefactorauth.types.LoginParams
+import com.web3auth.singlefactorauth.types.SingleFactorAuthArgs
+import com.web3auth.singlefactorauth.types.TorusSubVerifierInfo
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -31,12 +31,13 @@ class SingleFactAuthFlutterPlugin: FlutterPlugin, MethodCallHandler {
   private var gson: Gson = Gson()
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "single_fact_auth_flutter")
-    channel.setMethodCallHandler(this)
+      channel = MethodChannel(flutterPluginBinding.binaryMessenger, "single_fact_auth_flutter")
+      channel.setMethodCallHandler(this)
+      context = flutterPluginBinding.applicationContext
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
+      channel.setMethodCallHandler(null)
   }
 
   private fun getNetwork(network: String): TorusNetwork {
@@ -66,40 +67,64 @@ class SingleFactAuthFlutterPlugin: FlutterPlugin, MethodCallHandler {
     }  
 
   private fun runMethodCall(@NonNull call: MethodCall): Any? {
-        when (call.method) {
-            "getPlatformVersion" -> return "Android ${android.os.Build.VERSION.RELEASE}"
-            "getTorusKey" -> {
-                val initArgs = call.arguments<String>()
-                val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network))
-                singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
-                loginParams = LoginParams(
-                    params.verifier, params.email,
-                    params.idToken)
-                val torusKeyCF = singleFactorAuth.getKey(loginParams)
-                torusKeyCF.join()
-                var privateKey = BigInteger.ZERO
-                torusKeyCF.whenComplete { key, error ->
-                    if (error == null) {
-                        privateKey = key.privateKey
-                    } else {
-                        throw Error(error)
-                    }
-                }
-                return privateKey.toString(16) ?: "error"
-            }
+      when (call.method) {
+          "getPlatformVersion" -> return "Android ${android.os.Build.VERSION.RELEASE}"
+
+          "init" -> {
+              val initArgs = call.arguments<String>()
+              val params = gson.fromJson(initArgs, Web3AuthNetwork::class.java)
+              singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network))
+              singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
+              return null
+          }
+
+          "initialize" -> {
+              val torusKeyCF = singleFactorAuth.initialize(context)
+              torusKeyCF.join()
+              var privateKey = BigInteger.ZERO
+              torusKeyCF.whenComplete { key, error ->
+                  if (error == null) {
+                      privateKey = key.privateKey
+                  } else {
+                      throw Error(error)
+                  }
+              }
+              return privateKey.toString(16)
+          }
+
+          "getTorusKey" -> {
+              val initArgs = call.arguments<String>()
+              val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
+              loginParams = LoginParams(
+                  params.verifier, params.email,
+                  params.idToken
+              )
+              val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
+              torusKeyCF.join()
+              var privateKey = BigInteger.ZERO
+              torusKeyCF.whenComplete { key, error ->
+                  if (error == null) {
+                      privateKey = key.privateKey
+                  } else {
+                      throw Error(error)
+                  }
+              }
+              return privateKey.toString(16)
+          }
             "getAggregateTorusKey" -> {
                 val initArgs = call.arguments<String>()
                 val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network))
-                singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
                 loginParams = LoginParams(
-                    params.aggregateVerifier, params.email,
+                    params.aggregateVerifier.toString(), params.email,
                     params.idToken,
-                    arrayOf(TorusSubVerifierInfo(params.verifier,
-                        params.idToken
-                    )))
-                val torusKeyCF = singleFactorAuth.getKey(loginParams)
+                    arrayOf(
+                        TorusSubVerifierInfo(
+                            params.verifier,
+                            params.idToken
+                        )
+                    )
+                )
+                val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
                 torusKeyCF.join()
                 var privateKey = BigInteger.ZERO
                 torusKeyCF.whenComplete { key, error ->
@@ -109,7 +134,7 @@ class SingleFactAuthFlutterPlugin: FlutterPlugin, MethodCallHandler {
                         throw Error(error)
                     }
                 }
-                return privateKey.toString(16) ?: "error"
+                return privateKey.toString(16)
             }
         }
         throw NotImplementedError()
