@@ -109,10 +109,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _torusKey(Future<String?> Function() method) {
+  VoidCallback _torusKey(Future<String> Function() method) {
     return () async {
       try {
-        final String? response = await method();
+        final String response = await method();
         setState(() {
           _result = "Private Key : $response";
         });
@@ -124,14 +124,14 @@ class _MyAppState extends State<MyApp> {
     };
   }
 
-  Future<String?> testnetTorusKey() {
+  Future<String> testnetTorusKey() {
     return _singleFactAuthFlutterPlugin.getTorusKey(Web3AuthOptions(
         verifier: 'torus-test-health',
         email: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us")));
   }
 
-  Future<String?> getAggregrateTorusKey() {
+  Future<String> getAggregrateTorusKey() {
     return _singleFactAuthFlutterPlugin.getAggregateTorusKey(Web3AuthOptions(
         verifier: 'torus-test-health',
         email: 'hello@tor.us',
