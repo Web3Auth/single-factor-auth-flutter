@@ -25,43 +25,81 @@ public class SingleFactAuthFlutterPlugin: NSObject, FlutterPlugin {
           return TorusNetwork.MAINNET
       }
   }
+    
+    var decoder = JSONDecoder()
+    var encoder = JSONEncoder()
+    var singleFactorAuthArgs:SingleFactorAuthArgs?
+    var singleFactorAuth:SingleFactorAuth?
 
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-      case "getPlatformVersion":
-        result("iOS " + UIDevice.current.systemVersion)
-        break
-      case "getTorusKey":
-        let args = call.arguments as! [String]
-        let singleFactorAuthArgs = SingleFactorAuthArgs(network: self.getNetwork(args[0]))
-        let singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs: singleFactorAuthArgs)
-        let loginParams = LoginParams(verifier: args[1], verifierId: args[2],  idToken: args[3])
-        async {
-          do {
-            let torusKeyCF = try await singleFactorAuth.getKey(loginParams: loginParams)
-            result(torusKeyCF.map { $0.toJson() })
-          } catch {
-            result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
-          }
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        Task{
+            switch call.method {
+            case "getPlatformVersion":
+                await result("iOS " + UIDevice.current.systemVersion)
+                break
+            case "init":
+                let args = call.arguments as? String
+                guard let data = args?.data(using: .utf8) else{return result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))}
+                let params = try self.decoder.decode(InitParams.self, from: data)
+                singleFactorAuthArgs = SingleFactorAuthArgs(network: self.getNetwork(params.network))
+                singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs: singleFactorAuthArgs!)
+                return
+                break
+            case "initialize":
+                var resultMap: String = ""
+                do {
+                    let torusKeyCF = try await singleFactorAuth?.initialize()
+                    let resultData = try encoder.encode(torusKeyCF)
+                    resultMap = String(decoding: resultData, as: UTF8.self)
+                    return result("private key")
+                } catch {
+                    result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
+                }
+                break
+            case "getTorusKey":
+                var resultMap: String = ""
+                let args = call.arguments as? String
+                guard let data = args?.data(using: .utf8) else{return result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))}
+                let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
+                print(params)
+               
+                let loginParams = LoginParams(verifier: params.verifier, verifierId: params.email,  idToken: params.idToken)
+                do {
+                    let torusKeyCF = try await singleFactorAuth?.getKey(loginParams: loginParams)
+                    let resultData = try encoder.encode(torusKeyCF)
+                    resultMap = String(decoding: resultData, as: UTF8.self)
+                    return result(resultMap)
+                } catch {
+                    result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
+                }
+                break
+//            case "getAggregateTorusKey":
+//              let args = call.arguments as! [String]
+//              let singleFactorAuthArgs = SingleFactorAuthArgs(network: self.getNetwork(args[0]))
+//              let singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs: singleFactorAuthArgs)
+//              let loginParams = LoginParams(verifier: args[1], verifierId: args[2],  idToken: args[3], subVerifierInfoArray: [TorusSubVerifierInfo(verifier: args[1], idToken: args[3])])
+//              async {
+//                do {
+//                  let torusKeyCF = try await singleFactorAuth.getKey(loginParams: loginParams)
+//                  result(torusKeyCF.map { $0.toJson() })
+//                } catch {
+//                  result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
+//                }
+//              }
+//              break
+            default:
+                break
+            }
         }
-        break
-      case "getAggregateTorusKey":
-        let args = call.arguments as! [String]
-        let singleFactorAuthArgs = SingleFactorAuthArgs(network: self.getNetwork(args[0]))
-        let singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs: singleFactorAuthArgs)
-        let loginParams = LoginParams(verifier: args[1], verifierId: args[2],  idToken: args[3], subVerifierInfoArray: [TorusSubVerifierInfo(verifier: args[1], idToken: args[3])])
-        async {
-          do {
-            let torusKeyCF = try await singleFactorAuth.getKey(loginParams: loginParams)
-            result(torusKeyCF.map { $0.toJson() })
-          } catch {
-            result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
-          }
-        }
-        break
-      default:
-        break
-    }
   }
+}
+
+struct InitParams:Codable{
+var network:String
+}
+
+struct getTorusKeyParams:Codable{
+var verifier:String
+var email:String
+var idToken:String
 }
