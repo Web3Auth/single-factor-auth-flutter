@@ -33,7 +33,6 @@ class _MyAppState extends State<MyApp> {
         .then((value) => initialize());
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initialize() async {
     final String torusKey = await _singleFactAuthFlutterPlugin.initialize();
     if (torusKey.isNotEmpty) {
