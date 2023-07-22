@@ -47,11 +47,12 @@ public class SingleFactAuthFlutterPlugin: NSObject, FlutterPlugin {
                 break
             case "initialize":
                 var resultMap: String = ""
+                print("initialie() called");
                 do {
                     let torusKeyCF = try await singleFactorAuth?.initialize()
                     let resultData = try encoder.encode(torusKeyCF)
                     resultMap = String(decoding: resultData, as: UTF8.self)
-                    return result("private key")
+                    return result(resultMap)
                 } catch {
                     result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
                 }

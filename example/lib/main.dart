@@ -24,20 +24,22 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    init();
+  }
+
+  Future<void> init() async {
+    await _singleFactAuthFlutterPlugin
+        .init(Web3AuthNetwork(network: torusNetwork)).then((value) => initialize()); 
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    await _singleFactAuthFlutterPlugin
-        .init(Web3AuthNetwork(network: torusNetwork));
-
+  Future<void> initialize() async {
     final String torusKey = await _singleFactAuthFlutterPlugin.initialize();
     if (torusKey.isNotEmpty) {
       setState(() {
         _result = "Private Key : $torusKey";
       });
-    }
+    } 
   }
 
   Widget build(BuildContext context) {
@@ -95,6 +97,9 @@ class _MyAppState extends State<MyApp> {
                     ElevatedButton(
                         onPressed: _torusKey(testnetTorusKey),
                         child: const Text('GetTorusKey')),
+                    ElevatedButton(
+                        onPressed: _initialize(initalize),
+                        child: const Text('Get Session Response')),
                   ],
                 ),
               ),
@@ -114,6 +119,21 @@ class _MyAppState extends State<MyApp> {
       try {
         final String response = await method();
         setState(() {
+          _result = "Private Key : $response"; 
+        });
+      } on UserCancelledException {
+        print("User cancelled.");
+      } on UnKnownException {
+        print("Unknown exception occurred");
+      }
+    };
+  }
+
+  VoidCallback _initialize(Future<String> Function() method) {
+    return () async {
+      try {
+        final String response = await method();
+        setState(() {
           _result = "Private Key : $response";
         });
       } on UserCancelledException {
@@ -122,6 +142,10 @@ class _MyAppState extends State<MyApp> {
         print("Unknown exception occurred");
       }
     };
+  }
+
+  Future<String> initalize() {
+    return _singleFactAuthFlutterPlugin.initialize();
   }
 
   Future<String> testnetTorusKey() {
