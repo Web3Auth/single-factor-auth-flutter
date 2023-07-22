@@ -29,7 +29,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> init() async {
     await _singleFactAuthFlutterPlugin
-        .init(Web3AuthNetwork(network: torusNetwork)).then((value) => initialize()); 
+        .init(Web3AuthNetwork(network: torusNetwork))
+        .then((value) => initialize());
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
