@@ -24,14 +24,16 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+    init();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
+  Future<void> init() async {
     await _singleFactAuthFlutterPlugin
-        .init(Web3AuthNetwork(network: torusNetwork));
+        .init(Web3AuthNetwork(network: torusNetwork))
+        .then((value) => initialize());
+  }
 
+  Future<void> initialize() async {
     final String torusKey = await _singleFactAuthFlutterPlugin.initialize();
     if (torusKey.isNotEmpty) {
       setState(() {
