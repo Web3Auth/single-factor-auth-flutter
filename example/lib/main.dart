@@ -34,9 +34,7 @@ class _MyAppState extends State<MyApp> {
     } else if (Platform.isIOS) {
         init();
         initialize();
-    } else {
-      // do nothing
-    }    
+    } else {}    
   }
 
   Future<void> init() async {
