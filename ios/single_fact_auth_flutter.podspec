@@ -15,7 +15,7 @@ A new Flutter plugin project.
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'SingleFactorAuth', '~> 2.0.1'
+  s.dependency 'SingleFactorAuth', '~> 2.0.2'
   s.platform = :ios, '14.0'
 
   # Flutter.framework does not contain a i386 slice.

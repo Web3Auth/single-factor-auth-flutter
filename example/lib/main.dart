@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:single_fact_auth_flutter/input.dart';
@@ -24,16 +25,27 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    init();
+    initSdk();
+  }
+
+  Future<void> initSdk() async {
+    if(Platform.isAndroid) {
+        init().then((value) => initialize());
+    } else if (Platform.isIOS) {
+        init();
+        initialize();
+    } else {
+      // do nothing
+    }    
   }
 
   Future<void> init() async {
     await _singleFactAuthFlutterPlugin
-        .init(Web3AuthNetwork(network: torusNetwork))
-        .then((value) => initialize());
+        .init(Web3AuthNetwork(network: torusNetwork));
   }
 
   Future<void> initialize() async {
+    print("initialize() called");
     final String torusKey = await _singleFactAuthFlutterPlugin.initialize();
     if (torusKey.isNotEmpty) {
       setState(() {
@@ -98,7 +110,7 @@ class _MyAppState extends State<MyApp> {
                         onPressed: _torusKey(testnetTorusKey),
                         child: const Text('GetTorusKey')),
                     ElevatedButton(
-                        onPressed: _initialize(initalize),
+                        onPressed: _initialize(),
                         child: const Text('Get Session Response')),
                   ],
                 ),
@@ -129,10 +141,10 @@ class _MyAppState extends State<MyApp> {
     };
   }
 
-  VoidCallback _initialize(Future<String> Function() method) {
+  VoidCallback _initialize() {
     return () async {
       try {
-        final String response = await method();
+        final String response = await _singleFactAuthFlutterPlugin.initialize();
         setState(() {
           _result = "Private Key : $response";
         });
@@ -142,10 +154,6 @@ class _MyAppState extends State<MyApp> {
         print("Unknown exception occurred");
       }
     };
-  }
-
-  Future<String> initalize() {
-    return _singleFactAuthFlutterPlugin.initialize();
   }
 
   Future<String> testnetTorusKey() {

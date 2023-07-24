@@ -42,7 +42,8 @@ public class SingleFactAuthFlutterPlugin: NSObject, FlutterPlugin {
                 guard let data = args?.data(using: .utf8) else{return result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))}
                 let params = try self.decoder.decode(InitParams.self, from: data)
                 singleFactorAuthArgs = SingleFactorAuthArgs(network: self.getNetwork(params.network))
-                singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs: singleFactorAuthArgs!)
+                let singleFactorAuth = await SingleFactorAuth(singleFactorAuthArgs: singleFactorAuthArgs!)
+                self.singleFactorAuth = singleFactorAuth
                 return
                 break
             case "initialize":
