@@ -74,6 +74,23 @@ public class SingleFactAuthFlutterPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
                 }
                 break
+            case "getAggregateTorusKey":
+                var resultMap: String = ""
+                let args = call.arguments as? String
+                guard let data = args?.data(using: .utf8) else{return result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))}
+                let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
+                print(params)
+                
+                let loginParams = LoginParams(verifier: params.aggregateVerifier, verifierId: params.email,  idToken: params.idToken, subVerifierInfoArray: [TorusSubVerifierInfo(verifier: params.verifier, idToken: params.idToken)])
+                do {
+                    let torusKeyCF = try await singleFactorAuth?.getKey(loginParams: loginParams)
+                    let resultData = try encoder.encode(torusKeyCF)
+                    resultMap = String(decoding: resultData, as: UTF8.self)
+                    return result(resultMap)
+                } catch {
+                     result(FlutterError(code: "key_not_generated", message: "Key not generated", details: nil))
+                }
+                break    
             default:
                 break
             }
@@ -89,4 +106,5 @@ struct getTorusKeyParams:Codable{
 var verifier:String
 var email:String
 var idToken:String
+var aggregateVerifier:String
 }
