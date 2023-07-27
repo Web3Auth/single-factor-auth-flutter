@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     ElevatedButton(
-                        onPressed: _torusKey(testnetTorusKey),
+                        onPressed: _torusKey(getAggregrateTorusKey),
                         child: const Text('GetTorusKey')),
                     ElevatedButton(
                         onPressed: _initialize(),
