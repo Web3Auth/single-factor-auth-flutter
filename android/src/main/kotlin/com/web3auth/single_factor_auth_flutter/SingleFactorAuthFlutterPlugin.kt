@@ -1,4 +1,4 @@
-package com.web3auth.single_fact_auth_flutter
+package com.web3auth.single_factor_auth_flutter
 
 import android.content.Context
 import android.util.Log
@@ -17,8 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.torusresearch.fetchnodedetails.types.TorusNetwork
 
-/** SingleFactAuthFlutterPlugin */
-class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
+/** SingleFactorAuthFlutterPlugin */
+class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -31,7 +31,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
     private var gson: Gson = Gson()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "single_fact_auth_flutter")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "single_factor_auth_flutter")
         channel.setMethodCallHandler(this)
         context = flutterPluginBinding.applicationContext
     }
@@ -80,7 +80,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "initialize" -> {
                 try {
                     val torusKeyCF = singleFactorAuth.initialize(context)
-                    Log.d("${SingleFactAuthFlutterPlugin::class.qualifiedName}", "#initialize")
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
                     return if (torusKeyCF.get() != null) {
                         gson.toJson(torusKeyCF.get())
                     } else {
@@ -100,7 +100,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                         params.idToken
                     )
                     val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
-                    Log.d("${SingleFactAuthFlutterPlugin::class.qualifiedName}", "#getTorusKey")
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#getTorusKey")
                     return gson.toJson(torusKeyCF.get())
                 } catch (e: Throwable) {
                     throw Error(e)
@@ -123,7 +123,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                     val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
                     Log.d(
-                        "${SingleFactAuthFlutterPlugin::class.qualifiedName}",
+                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
                         "#getAggregateTorusKey"
                     )
                     return gson.toJson(torusKeyCF.get())

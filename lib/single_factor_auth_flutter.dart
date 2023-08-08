@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:single_fact_auth_flutter/input.dart';
+import 'package:single_factor_auth_flutter/input.dart';
 
-import 'single_fact_auth_flutter_platform_interface.dart';
+import 'single_factor_auth_flutter_platform_interface.dart';
 
 class SingleFactAuthFlutter {
   static const MethodChannel _channel =
-      MethodChannel('single_fact_auth_flutter');
+      MethodChannel('single_factor_auth_flutter');
 
   Future<String?> getPlatformVersion() {
     return SingleFactAuthFlutterPlatform.instance.getPlatformVersion();

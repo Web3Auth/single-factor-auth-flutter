@@ -1,10 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:single_fact_auth_flutter/single_fact_auth_flutter_method_channel.dart';
+import 'package:single_factor_auth_flutter/single_factor_auth_flutter_method_channel.dart';
 
 void main() {
-  MethodChannelSingleFactAuthFlutter platform = MethodChannelSingleFactAuthFlutter();
-  const MethodChannel channel = MethodChannel('single_fact_auth_flutter');
+  MethodChannelSingleFactAuthFlutter platform =
+      MethodChannelSingleFactAuthFlutter();
+  const MethodChannel channel = MethodChannel('single_factor_auth_flutter');
 
   TestWidgetsFlutterBinding.ensureInitialized();
 

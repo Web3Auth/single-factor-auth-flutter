@@ -1,6 +1,6 @@
-# single_fact_auth_flutter_example
+# single_factor_auth_flutter_example
 
-Demonstrates how to use the single_fact_auth_flutter plugin.
+Demonstrates how to use the single_factor_auth_flutter plugin.
 
 ## Getting Started
 

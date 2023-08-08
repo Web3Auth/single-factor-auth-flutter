@@ -2,10 +2,10 @@ import Flutter
 import UIKit
 import SingleFactorAuth
 
-public class SingleFactAuthFlutterPlugin: NSObject, FlutterPlugin {
+public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "single_fact_auth_flutter", binaryMessenger: registrar.messenger())
-    let instance = SingleFactAuthFlutterPlugin()
+    let channel = FlutterMethodChannel(name: "single_factor_auth_flutter", binaryMessenger: registrar.messenger())
+    let instance = SingleFactorAuthFlutterPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
@@ -79,7 +79,8 @@ public class SingleFactAuthFlutterPlugin: NSObject, FlutterPlugin {
                 let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
                 print(params)
 
-                let loginParams = LoginParams(verifier: params.aggregateVerifier, verifierId: params.email, idToken: params.idToken, subVerifierInfoArray: [TorusSubVerifierInfo(verifier: params.verifier, idToken: params.idToken)])
+                let loginParams = LoginParams(verifier: params.aggregateVerifier, verifierId: params.email, idToken: params.idToken,
+                subVerifierInfoArray: [TorusSubVerifierInfo(verifier: params.verifier, idToken: params.idToken)])
                 do {
                     let torusKeyCF = try await singleFactorAuth?.getKey(loginParams: loginParams)
                     let resultData = try encoder.encode(torusKeyCF)

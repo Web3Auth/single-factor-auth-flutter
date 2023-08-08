@@ -5,7 +5,7 @@ PODS:
   - GenericJSON (2.0.2)
   - KeychainSwift (20.0.0)
   - secp256k1.swift (0.1.4)
-  - single_fact_auth_flutter (0.0.1):
+  - single_factor_auth_flutter (0.0.1):
     - Flutter
     - SingleFactorAuth (~> 2.0.3)
   - SingleFactorAuth (2.0.3):
@@ -29,7 +29,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - single_fact_auth_flutter (from `.symlinks/plugins/single_fact_auth_flutter/ios`)
+  - single_factor_auth_flutter (from `.symlinks/plugins/single_factor_auth_flutter/ios`)
 
 SPEC REPOS:
   trunk:
@@ -47,8 +47,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  single_fact_auth_flutter:
-    :path: ".symlinks/plugins/single_fact_auth_flutter/ios"
+  single_factor_auth_flutter:
+    :path: ".symlinks/plugins/single_factor_auth_flutter/ios"
 
 SPEC CHECKSUMS:
   BigInt: 74b4d88367b0e819d9f77393549226d36faeb0d8
@@ -57,7 +57,7 @@ SPEC CHECKSUMS:
   GenericJSON: 79a840eeb77030962e8cf02a62d36bd413b67626
   KeychainSwift: 0ce6a4d13f7228054d1a71bb1b500448fb2ab837
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  single_fact_auth_flutter: dcb9a0a6052242d1366cebf0ffbbfd9db11b9637
+  single_factor_auth_flutter: dc31ec16f89101af2d7be3a0f4f807889dc96726
   SingleFactorAuth: 9aa82543902e2a4de5a0a456a294eed5d3816d9d
   Torus-fetchNodeDetails: a92d02f1bfe91bd61c90f92d64df023babaa5bfa
   Torus-utils: 9ac46eb76935e328a6628108c94b66e1af1e7fa7

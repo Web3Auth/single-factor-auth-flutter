@@ -1,4 +1,4 @@
-package com.web3auth.single_fact_auth_flutter
+package com.web3auth.single_factor_auth_flutter
 
 data class Web3AuthOptions(
     val verifier: String,

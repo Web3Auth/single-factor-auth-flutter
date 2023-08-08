@@ -1,6 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'single_fact_auth_flutter_method_channel.dart';
+import 'single_factor_auth_flutter_method_channel.dart';
 
 abstract class SingleFactAuthFlutterPlatform extends PlatformInterface {
   /// Constructs a SingleFactAuthFlutterPlatform.
@@ -8,7 +8,8 @@ abstract class SingleFactAuthFlutterPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static SingleFactAuthFlutterPlatform _instance = MethodChannelSingleFactAuthFlutter();
+  static SingleFactAuthFlutterPlatform _instance =
+      MethodChannelSingleFactAuthFlutter();
 
   /// The default instance of [SingleFactAuthFlutterPlatform] to use.
   ///

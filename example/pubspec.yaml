@@ -1,11 +1,11 @@
-name: single_fact_auth_flutter_example
-description: Demonstrates how to use the single_fact_auth_flutter plugin.
+name: single_factor_auth_flutter_example
+description: Demonstrates how to use the single_factor_auth_flutter plugin.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=2.19.1 <3.0.0'
+  sdk: ">=2.19.1 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -17,9 +17,9 @@ dependencies:
   flutter:
     sdk: flutter
 
-  single_fact_auth_flutter:
+  single_factor_auth_flutter:
     # When depending on this package from a real application you should use:
-    #   single_fact_auth_flutter: ^x.y.z
+    #   single_factor_auth_flutter: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
@@ -46,7 +46,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

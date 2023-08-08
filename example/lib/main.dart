@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:single_fact_auth_flutter/input.dart';
-import 'package:single_fact_auth_flutter/single_fact_auth_flutter.dart';
+import 'package:single_factor_auth_flutter/input.dart';
+import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _singleFactAuthFlutterPlugin = SingleFactAuthFlutter();
+  final _SingleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
   TorusNetwork torusNetwork = TorusNetwork.testnet;
@@ -29,29 +29,30 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initSdk() async {
-    if(Platform.isAndroid) {
-        init().then((value) => initialize());
+    if (Platform.isAndroid) {
+      init().then((value) => initialize());
     } else if (Platform.isIOS) {
-        init();
-        initialize();
-    } else {}    
+      init();
+      initialize();
+    } else {}
   }
 
   Future<void> init() async {
-    await _singleFactAuthFlutterPlugin
-        .init(Web3AuthNetwork(network: torusNetwork));
+    await _SingleFactorAuthFlutterPlugin.init(
+        Web3AuthNetwork(network: torusNetwork));
   }
 
   Future<void> initialize() async {
     print("initialize() called");
-    final String torusKey = await _singleFactAuthFlutterPlugin.initialize();
+    final String torusKey = await _SingleFactorAuthFlutterPlugin.initialize();
     if (torusKey.isNotEmpty) {
       setState(() {
         _result = "Private Key : $torusKey";
       });
-    } 
+    }
   }
 
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -129,7 +130,7 @@ class _MyAppState extends State<MyApp> {
       try {
         final String response = await method();
         setState(() {
-          _result = "Private Key : $response"; 
+          _result = "Private Key : $response";
         });
       } on UserCancelledException {
         print("User cancelled.");
@@ -142,7 +143,8 @@ class _MyAppState extends State<MyApp> {
   VoidCallback _initialize() {
     return () async {
       try {
-        final String response = await _singleFactAuthFlutterPlugin.initialize();
+        final String response =
+            await _SingleFactorAuthFlutterPlugin.initialize();
         setState(() {
           _result = "Private Key : $response";
         });
@@ -155,14 +157,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<String> testnetTorusKey() {
-    return _singleFactAuthFlutterPlugin.getTorusKey(Web3AuthOptions(
+    return _SingleFactorAuthFlutterPlugin.getTorusKey(Web3AuthOptions(
         verifier: 'torus-test-health',
         email: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us")));
   }
 
   Future<String> getAggregrateTorusKey() {
-    return _singleFactAuthFlutterPlugin.getAggregateTorusKey(Web3AuthOptions(
+    return _SingleFactorAuthFlutterPlugin.getAggregateTorusKey(Web3AuthOptions(
         verifier: 'torus-test-health',
         email: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),

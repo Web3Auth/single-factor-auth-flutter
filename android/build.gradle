@@ -1,4 +1,4 @@
-group 'com.web3auth.single_fact_auth_flutter'
+group 'com.web3auth.single_factor_auth_flutter'
 version '1.0-SNAPSHOT'
 
 buildscript {

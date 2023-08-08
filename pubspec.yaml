@@ -1,4 +1,4 @@
-name: single_fact_auth_flutter
+name: single_factor_auth_flutter
 description: A new Flutter plugin project.
 version: 0.0.1
 homepage: "https://github.com/web3auth/single-factor-auth-flutter"
@@ -36,10 +36,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.web3auth.single_fact_auth_flutter
-        pluginClass: SingleFactAuthFlutterPlugin
+        package: com.web3auth.single_factor_auth_flutter
+        pluginClass: SingleFactorAuthFlutterPlugin
       ios:
-        pluginClass: SingleFactAuthFlutterPlugin
+        pluginClass: SingleFactorAuthFlutterPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

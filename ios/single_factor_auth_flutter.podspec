@@ -1,9 +1,9 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint single_fact_auth_flutter.podspec` to validate before publishing.
+# Run `pod lib lint single_factor_auth_flutter.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'single_fact_auth_flutter'
+  s.name             = 'single_factor_auth_flutter'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
   s.description      = <<-DESC
