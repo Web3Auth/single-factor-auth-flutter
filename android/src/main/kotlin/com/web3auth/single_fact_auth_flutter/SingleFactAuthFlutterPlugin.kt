@@ -46,7 +46,6 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "testnet" -> TorusNetwork.TESTNET
             "aqua" -> TorusNetwork.AQUA
             "cyan" -> TorusNetwork.CYAN
-            "celeste" -> TorusNetwork.CELESTE
             else -> TorusNetwork.MAINNET
         }
     }

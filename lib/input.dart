@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
 class Web3AuthOptions {
@@ -36,7 +35,7 @@ class Web3AuthNetwork {
   }
 }
 
-enum TorusNetwork { mainnet, testnet, cyan, aqua, celeste }
+enum TorusNetwork { mainnet, testnet, cyan, aqua }
 
 class UserCancelledException implements Exception {}
 
