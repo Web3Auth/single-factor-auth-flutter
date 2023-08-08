@@ -83,7 +83,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     val torusKeyCF = singleFactorAuth.initialize(context)
                     Log.d("${SingleFactAuthFlutterPlugin::class.qualifiedName}", "#initialize")
                     return if (torusKeyCF.get() != null) {
-                        torusKeyCF.get().privateKey?.toString(16)
+                        gson.toJson(torusKeyCF.get())
                     } else {
                         ""
                     }
@@ -102,8 +102,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                     val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
                     Log.d("${SingleFactAuthFlutterPlugin::class.qualifiedName}", "#getTorusKey")
-                    val privateKey = torusKeyCF.get().privateKey
-                    return privateKey?.toString(16)
+                    return gson.toJson(torusKeyCF.get())
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
@@ -128,8 +127,7 @@ class SingleFactAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                         "${SingleFactAuthFlutterPlugin::class.qualifiedName}",
                         "#getAggregateTorusKey"
                     )
-                    val privateKey = torusKeyCF.get().privateKey
-                    return privateKey?.toString(16)
+                    return gson.toJson(torusKeyCF.get())
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
