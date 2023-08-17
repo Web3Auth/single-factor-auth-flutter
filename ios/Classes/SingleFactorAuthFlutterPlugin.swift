@@ -62,7 +62,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
                 print(params)
 
-                let loginParams = LoginParams(verifier: params.verifier, verifierId: params.email, idToken: params.idToken)
+                let loginParams = LoginParams(verifier: params.verifier, verifierId: params.verifierId, idToken: params.idToken)
                 do {
                     let torusKeyCF = try await singleFactorAuth?.getKey(loginParams: loginParams)
                     let resultData = try encoder.encode(torusKeyCF)
@@ -79,7 +79,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
                 print(params)
 
-                let loginParams = LoginParams(verifier: params.aggregateVerifier, verifierId: params.email, idToken: params.idToken,
+                let loginParams = LoginParams(verifier: params.aggregateVerifier, verifierId: params.verifierId, idToken: params.idToken,
                 subVerifierInfoArray: [TorusSubVerifierInfo(verifier: params.verifier, idToken: params.idToken)])
                 do {
                     let torusKeyCF = try await singleFactorAuth?.getKey(loginParams: loginParams)
@@ -103,7 +103,7 @@ var network: String
 
 struct getTorusKeyParams: Codable {
 var verifier: String
-var email: String
+var verifierId: String
 var idToken: String
 var aggregateVerifier: String
 }
