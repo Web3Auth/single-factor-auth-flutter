@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:single_factor_auth_flutter/input.dart';
 import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
+import './utils.dart';
 
 void main() {
   runApp(const MyApp());
