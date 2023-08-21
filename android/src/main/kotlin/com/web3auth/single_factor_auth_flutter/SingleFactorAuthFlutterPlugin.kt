@@ -96,7 +96,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     val initArgs = call.arguments<String>()
                     val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
                     loginParams = LoginParams(
-                        params.verifier, params.email,
+                        params.verifier, params.verifierId,
                         params.idToken
                     )
                     val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
@@ -112,7 +112,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     val initArgs = call.arguments<String>()
                     val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
                     loginParams = LoginParams(
-                        params.aggregateVerifier.toString(), params.email,
+                        params.aggregateVerifier.toString(), params.verifierId,
                         params.idToken,
                         arrayOf(
                             TorusSubVerifierInfo(

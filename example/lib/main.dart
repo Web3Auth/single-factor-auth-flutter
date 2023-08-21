@@ -106,7 +106,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     ElevatedButton(
-                        onPressed: _torusKey(getAggregrateTorusKey),
+                        onPressed: _getKey(getAggregrateKey),
                         child: const Text('GetTorusKey')),
                     ElevatedButton(
                         onPressed: _initialize(),
@@ -125,7 +125,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _torusKey(Future<String> Function() method) {
+  VoidCallback _getKey(Future<String> Function() method) {
     return () async {
       try {
         final String response = await method();
@@ -156,17 +156,17 @@ class _MyAppState extends State<MyApp> {
     };
   }
 
-  Future<String> testnetTorusKey() {
-    return _SingleFactorAuthFlutterPlugin.getTorusKey(Web3AuthOptions(
+  Future<String> getKey() {
+    return _SingleFactorAuthFlutterPlugin.getKey(LoginParams(
         verifier: 'torus-test-health',
-        email: 'hello@tor.us',
+        verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us")));
   }
 
-  Future<String> getAggregrateTorusKey() {
-    return _SingleFactorAuthFlutterPlugin.getAggregateTorusKey(Web3AuthOptions(
+  Future<String> getAggregrateKey() {
+    return _SingleFactorAuthFlutterPlugin.getAggregateKey(LoginParams(
         verifier: 'torus-test-health',
-        email: 'hello@tor.us',
+        verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),
         aggregateVerifier: 'torus-test-health-aggregate'));
   }

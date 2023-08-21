@@ -37,12 +37,12 @@ class SingleFactAuthFlutter {
     }
   }
 
-  Future<String> getTorusKey(Web3AuthOptions web3authOptions) async {
+  Future<String> getKey(LoginParams loginParams) async {
     try {
-      Map<String, dynamic> loginParamsJson = web3authOptions.toJson();
+      Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
-      final String privateKey = await _channel.invokeMethod(
-          'getTorusKey', jsonEncode(web3authOptions));
+      final String privateKey =
+          await _channel.invokeMethod('getTorusKey', jsonEncode(loginParams));
       return privateKey;
     } on PlatformException catch (e) {
       switch (e.code) {
@@ -56,12 +56,12 @@ class SingleFactAuthFlutter {
     }
   }
 
-  Future<String> getAggregateTorusKey(Web3AuthOptions web3authOptions) async {
+  Future<String> getAggregateKey(LoginParams loginParams) async {
     try {
-      Map<String, dynamic> loginParamsJson = web3authOptions.toJson();
+      Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
       final String privateKey = await _channel.invokeMethod(
-          'getAggregateTorusKey', jsonEncode(web3authOptions));
+          'getAggregateTorusKey', jsonEncode(loginParams));
       return privateKey;
     } on PlatformException catch (e) {
       switch (e.code) {

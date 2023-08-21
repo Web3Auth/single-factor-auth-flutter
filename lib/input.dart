@@ -1,14 +1,14 @@
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 
-class Web3AuthOptions {
+class LoginParams {
   final String verifier;
-  final String email;
+  final String verifierId;
   final String idToken;
   final String? aggregateVerifier;
 
-  Web3AuthOptions({
+  LoginParams({
     required this.verifier,
-    required this.email,
+    required this.verifierId,
     required this.idToken,
     this.aggregateVerifier,
   });
@@ -16,7 +16,7 @@ class Web3AuthOptions {
   Map<String, dynamic> toJson() {
     return {
       'verifier': verifier,
-      'email': email,
+      'verifierId': verifierId,
       'idToken': idToken,
       'aggregateVerifier': aggregateVerifier,
     };
