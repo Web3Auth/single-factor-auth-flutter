@@ -33,10 +33,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
-      init().then((value) => initialize());
+      await init();
+      initialize();
     } else if (Platform.isIOS) {
       await init();
-      await initialize();
+      initialize();
     } else {}
   }
 
