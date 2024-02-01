@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:single_factor_auth_flutter/input.dart';
+import 'package:single_factor_auth_flutter/output.dart';
 
 import 'single_factor_auth_flutter_platform_interface.dart';
 
@@ -20,58 +21,60 @@ class SingleFactAuthFlutter {
     await _channel.invokeMethod('init', jsonEncode(initParamsJson));
   }
 
-  Future<String> initialize() async {
+  Future<TorusKey?> initialize() async {
     try {
-      final String privKey =
-          await _channel.invokeMethod('initialize', jsonEncode({}));
-      return privKey;
-    } on PlatformException catch (e) {
-      switch (e.code) {
-        case "UserCancelledException":
-          throw UserCancelledException();
-        case "NoAllowedBrowserFoundException":
-          throw UnKnownException(e.message);
-        default:
-          rethrow;
+      final String? torusKeyJson = await _channel.invokeMethod(
+        'initialize',
+      );
+
+      if (torusKeyJson != null) {
+        return torusKeyFromJson(torusKeyJson);
       }
+      return null;
+    } on PlatformException catch (e) {
+      throw _hanldePlatformException(e);
     }
   }
 
-  Future<String> getKey(LoginParams loginParams) async {
+  Future<TorusKey> getKey(LoginParams loginParams) async {
     try {
       Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
-      final String privateKey =
-          await _channel.invokeMethod('getTorusKey', jsonEncode(loginParams));
-      return privateKey;
+      final String torusKeyJson = await _channel.invokeMethod(
+        'getTorusKey',
+        jsonEncode(loginParams),
+      );
+      return torusKeyFromJson(torusKeyJson);
     } on PlatformException catch (e) {
-      switch (e.code) {
-        case "UserCancelledException":
-          throw UserCancelledException();
-        case "NoAllowedBrowserFoundException":
-          throw UnKnownException(e.message);
-        default:
-          rethrow;
-      }
+      throw _hanldePlatformException(e);
     }
   }
 
-  Future<String> getAggregateKey(LoginParams loginParams) async {
+  Future<TorusKey> getAggregateKey(LoginParams loginParams) async {
     try {
       Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
-      final String privateKey = await _channel.invokeMethod(
-          'getAggregateTorusKey', jsonEncode(loginParams));
-      return privateKey;
+      final String torusKeyJson = await _channel.invokeMethod(
+        'getAggregateTorusKey',
+        jsonEncode(loginParams),
+      );
+
+      return torusKeyFromJson(torusKeyJson);
     } on PlatformException catch (e) {
-      switch (e.code) {
-        case "UserCancelledException":
-          throw UserCancelledException();
-        case "NoAllowedBrowserFoundException":
-          throw UnKnownException(e.message);
-        default:
-          rethrow;
-      }
+      throw _hanldePlatformException(e);
+    }
+  }
+
+  Exception _hanldePlatformException(PlatformException e) {
+    switch (e.code) {
+      case "UserCancelledException":
+        throw UserCancelledException();
+      case "NoAllowedBrowserFoundException":
+        throw UnKnownException(e.message);
+      case "key_not_generated":
+        throw PrivateKeyNotGeneratedException();
+      default:
+        throw e;
     }
   }
 }

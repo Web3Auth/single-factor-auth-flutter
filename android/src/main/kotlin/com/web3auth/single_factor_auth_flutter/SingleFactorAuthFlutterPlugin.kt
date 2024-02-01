@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.web3auth.singlefactorauth.SingleFactorAuth
 import com.web3auth.singlefactorauth.types.LoginParams
 import com.web3auth.singlefactorauth.types.SingleFactorAuthArgs
+import com.web3auth.singlefactorauth.types.TorusKey
 import com.web3auth.singlefactorauth.types.TorusSubVerifierInfo
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -82,7 +83,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     val torusKeyCF = singleFactorAuth.initialize(context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
                     return if (torusKeyCF.get() != null) {
-                        gson.toJson(torusKeyCF.get())
+                        val torusKey = torusKeyCF.get()
+                        prepareResult(torusKey)
                     } else {
                         ""
                     }
@@ -101,7 +103,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                     val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#getTorusKey")
-                    return gson.toJson(torusKeyCF.get())
+                    val torusKey = torusKeyCF.get()
+                    return prepareResult(torusKey)
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
@@ -126,12 +129,19 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
                         "#getAggregateTorusKey"
                     )
-                    return gson.toJson(torusKeyCF.get())
+                    return prepareResult(torusKeyCF.get())
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
             }
         }
         throw NotImplementedError()
+    }
+
+    private fun prepareResult(torusKey: TorusKey): String {
+        val hashMap: HashMap<String, String> = HashMap<String, String>(2)
+        hashMap["privateKey"] = torusKey.privateKey?.toString(16) as String
+        hashMap["publicAddress"] = torusKey.publicAddress as String
+        return gson.toJson(hashMap)
     }
 }

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:single_factor_auth_flutter/input.dart';
+import 'package:single_factor_auth_flutter/output.dart';
 import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
 import './utils.dart';
 
@@ -18,7 +20,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _SingleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
+  final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
   TorusNetwork torusNetwork = TorusNetwork.testnet;
@@ -33,22 +35,23 @@ class _MyAppState extends State<MyApp> {
     if (Platform.isAndroid) {
       init().then((value) => initialize());
     } else if (Platform.isIOS) {
-      init();
-      initialize();
+      await init();
+      await initialize();
     } else {}
   }
 
   Future<void> init() async {
-    await _SingleFactorAuthFlutterPlugin.init(
-        Web3AuthNetwork(network: torusNetwork));
+    await _singleFactorAuthFlutterPlugin
+        .init(Web3AuthNetwork(network: torusNetwork));
   }
 
   Future<void> initialize() async {
-    print("initialize() called");
-    final String torusKey = await _SingleFactorAuthFlutterPlugin.initialize();
-    if (torusKey.isNotEmpty) {
+    log("initialize() called");
+    final TorusKey? torusKey =
+        await _singleFactorAuthFlutterPlugin.initialize();
+    if (torusKey != null) {
       setState(() {
-        _result = "Private Key : $torusKey";
+        _result = "Private Key : ${torusKey.privateKey}";
       });
     }
   }
@@ -107,11 +110,13 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     ElevatedButton(
-                        onPressed: _getKey(getAggregrateKey),
-                        child: const Text('GetTorusKey')),
+                      onPressed: _getKey(getAggregrateKey),
+                      child: const Text('GetTorusKey'),
+                    ),
                     ElevatedButton(
-                        onPressed: _initialize(),
-                        child: const Text('Get Session Response')),
+                      onPressed: () => _initialize(),
+                      child: const Text('Get Session Response'),
+                    ),
                   ],
                 ),
               ),
@@ -126,49 +131,55 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _getKey(Future<String> Function() method) {
+  VoidCallback _getKey(Future<TorusKey> Function() method) {
     return () async {
       try {
-        final String response = await method();
+        final TorusKey response = await method();
         setState(() {
-          _result = "Private Key : $response";
+          _result = "Private Key : ${response.privateKey}";
+          log(response.publicAddress);
         });
-      } on UserCancelledException {
-        print("User cancelled.");
+      } on PrivateKeyNotGeneratedException {
+        log("Private key not generated");
       } on UnKnownException {
-        print("Unknown exception occurred");
+        log("Unknown exception occurred");
       }
     };
   }
 
-  VoidCallback _initialize() {
-    return () async {
-      try {
-        final String response =
-            await _SingleFactorAuthFlutterPlugin.initialize();
-        setState(() {
-          _result = "Private Key : $response";
-        });
-      } on UserCancelledException {
-        print("User cancelled.");
-      } on UnKnownException {
-        print("Unknown exception occurred");
-      }
-    };
+  Future<void> _initialize() async {
+    try {
+      final TorusKey? response =
+          await _singleFactorAuthFlutterPlugin.initialize();
+      setState(() {
+        _result = "Private Key : ${response?.privateKey}";
+        log(response!.publicAddress);
+      });
+    } on PrivateKeyNotGeneratedException {
+      log("Private key not generated");
+    } on UnKnownException {
+      log("Unknown exception occurred");
+    }
   }
 
-  Future<String> getKey() {
-    return _SingleFactorAuthFlutterPlugin.getKey(LoginParams(
-        verifier: 'torus-test-health',
-        verifierId: 'hello@tor.us',
-        idToken: Utils().es256Token("hello@tor.us")));
-  }
-
-  Future<String> getAggregrateKey() {
-    return _SingleFactorAuthFlutterPlugin.getAggregateKey(LoginParams(
+  Future<TorusKey> getKey() {
+    return _singleFactorAuthFlutterPlugin.getKey(
+      LoginParams(
         verifier: 'torus-test-health',
         verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),
-        aggregateVerifier: 'torus-test-health-aggregate'));
+      ),
+    );
+  }
+
+  Future<TorusKey> getAggregrateKey() {
+    return _singleFactorAuthFlutterPlugin.getAggregateKey(
+      LoginParams(
+        verifier: 'torus-test-health',
+        verifierId: 'hello@tor.us',
+        idToken: Utils().es256Token("hello@tor.us"),
+        aggregateVerifier: 'torus-test-health-aggregate',
+      ),
+    );
   }
 }
