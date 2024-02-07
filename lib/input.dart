@@ -37,6 +37,8 @@ enum TorusNetwork { mainnet, testnet, cyan, aqua }
 
 class UserCancelledException implements Exception {}
 
+class PrivateKeyNotGeneratedException implements Exception {}
+
 class UnKnownException implements Exception {
   final String? message;
 
