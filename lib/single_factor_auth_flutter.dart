@@ -73,6 +73,8 @@ class SingleFactAuthFlutter {
         throw UnKnownException(e.message);
       case "key_not_generated":
         throw PrivateKeyNotGeneratedException();
+      case "missing_param":
+        throw MissingParamException(paramName: e.message!);
       default:
         throw e;
     }

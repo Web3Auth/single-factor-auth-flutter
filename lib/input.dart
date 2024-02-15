@@ -39,6 +39,13 @@ class UserCancelledException implements Exception {}
 
 class PrivateKeyNotGeneratedException implements Exception {}
 
+class MissingParamException implements Exception {
+  final String paramName;
+
+  MissingParamException({required this.paramName});
+
+}
+
 class UnKnownException implements Exception {
   final String? message;
 
