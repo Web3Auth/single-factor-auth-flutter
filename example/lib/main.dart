@@ -140,6 +140,8 @@ class _MyAppState extends State<MyApp> {
           _result = "Private Key : ${response.privateKey}";
           log(response.publicAddress);
         });
+      } on MissingParamException catch (error) {
+        log("Missing Param: ${error.paramName}");
       } on PrivateKeyNotGeneratedException {
         log("Private key not generated");
       } on UnKnownException {

@@ -76,6 +76,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 guard let data = args?.data(using: .utf8) else {
                     return result(throwKeyNotGeneratedError())
                 }
+
                 let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
                 
                 let loginParams = LoginParams(
@@ -85,6 +86,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 )
                 
                 do {
+                  
                     let torusKeyCF = try await singleFactorAuth?.getKey(
                         loginParams: loginParams
                     )
@@ -105,8 +107,12 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
                 let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
                 
+                guard let aggregateVerifier = params.aggregateVerifier else {
+                   return result(throwParamMissingError(param: "aggregateVerifier"))
+                }
+                
                 let loginParams = LoginParams(
-                    verifier: params.aggregateVerifier,
+                    verifier: params.aggregateVerifier!,
                     verifierId: params.verifierId,
                     idToken: params.idToken,
                     subVerifierInfoArray: [
@@ -140,6 +146,12 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
         )
     }
     
+    public func throwParamMissingError(param: String) -> FlutterError {
+        return FlutterError(
+            code: "missing_param", message: param, details: nil
+        )
+    }
+    
 }
 
 struct InitParams: Codable {
@@ -150,5 +162,5 @@ struct getTorusKeyParams: Codable {
     var verifier: String
     var verifierId: String
     var idToken: String
-    var aggregateVerifier: String
+    var aggregateVerifier: String?
 }
