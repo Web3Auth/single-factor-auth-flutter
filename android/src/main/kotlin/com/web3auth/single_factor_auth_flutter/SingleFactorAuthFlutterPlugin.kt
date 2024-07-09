@@ -47,6 +47,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "testnet" -> TorusNetwork.TESTNET
             "aqua" -> TorusNetwork.AQUA
             "cyan" -> TorusNetwork.CYAN
+            "celeste" -> TorusNetwork.CELESTE
             else -> TorusNetwork.MAINNET
         }
     }
@@ -72,8 +73,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "init" -> {
                 val initArgs = call.arguments<String>()
-                val params = gson.fromJson(initArgs, Web3AuthNetwork::class.java)
-                singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network))
+                val params = gson.fromJson(initArgs, SFAParams::class.java)
+                singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network), params.clientid)
                 singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
                 return null
             }

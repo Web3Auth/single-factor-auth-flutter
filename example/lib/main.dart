@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:single_factor_auth_flutter/input.dart';
 import 'package:single_factor_auth_flutter/output.dart';
 import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
+
 import './utils.dart';
 
 void main() {
@@ -23,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
-  TorusNetwork torusNetwork = TorusNetwork.testnet;
+  Web3AuthNetwork torusNetwork = Web3AuthNetwork.aqua;
 
   @override
   void initState() {
@@ -43,7 +44,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> init() async {
     await _singleFactorAuthFlutterPlugin
-        .init(Web3AuthNetwork(network: torusNetwork));
+        .init(SFAParams(network: torusNetwork, clientid: 'YOUR_CLIENT_ID'));
   }
 
   Future<void> initialize() async {

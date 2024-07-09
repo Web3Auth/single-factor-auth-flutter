@@ -21,19 +21,21 @@ class LoginParams {
   }
 }
 
-class Web3AuthNetwork {
-  final TorusNetwork network;
+class SFAParams {
+  final Web3AuthNetwork network;
+  final String clientid;
 
-  Web3AuthNetwork({required this.network});
+  SFAParams({required this.network, required this.clientid});
 
   Map<String, dynamic> toJson() {
     return {
       'network': network.name,
+      'clientid': clientid,
     };
   }
 }
 
-enum TorusNetwork { mainnet, testnet, cyan, aqua }
+enum Web3AuthNetwork { mainnet, testnet, cyan, aqua, celeste }
 
 class UserCancelledException implements Exception {}
 

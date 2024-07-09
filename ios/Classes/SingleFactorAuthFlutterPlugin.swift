@@ -13,18 +13,18 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
-    private func getNetwork(_ network: String) -> TorusNetwork {
+    private func getNetwork(_ network: String) -> Web3AuthNetwork {
         switch network {
         case "mainnet":
-            return TorusNetwork.MAINNET
+            return Web3AuthNetwork.MAINNET
         case "testnet":
-            return TorusNetwork.TESTNET
+            return Web3AuthNetwork.TESTNET
         case "aqua":
-            return TorusNetwork.AQUA
+            return Web3AuthNetwork.AQUA
         case "cyan":
-            return TorusNetwork.CYAN
+            return Web3AuthNetwork.CYAN
         default:
-            return TorusNetwork.MAINNET
+            return Web3AuthNetwork.MAINNET
         }
     }
     
@@ -48,6 +48,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 let params = try self.decoder.decode(InitParams.self, from: data)
                 
                 singleFactorAuthArgs = SingleFactorAuthArgs(
+                    web3AuthClientId: params.clientid,
                     network: self.getNetwork(params.network)
                 )
                 
@@ -60,7 +61,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
             case "initialize":
                 do {
-                    guard let torusKeyCF = await singleFactorAuth?.initialize() else {
+                    guard let torusKeyCF = try await singleFactorAuth?.initialize() else {
                         return result(nil)
                     }
                     
@@ -156,6 +157,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
 
 struct InitParams: Codable {
     var network: String
+    var clientid: String
 }
 
 struct getTorusKeyParams: Codable {
