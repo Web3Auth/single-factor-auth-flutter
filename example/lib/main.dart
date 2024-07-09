@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
-  TorusNetwork torusNetwork = TorusNetwork.aqua;
+  Web3AuthNetwork torusNetwork = Web3AuthNetwork.aqua;
 
   @override
   void initState() {

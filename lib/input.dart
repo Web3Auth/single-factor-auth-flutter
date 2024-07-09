@@ -22,7 +22,7 @@ class LoginParams {
 }
 
 class SFAParams {
-  final TorusNetwork network;
+  final Web3AuthNetwork network;
   final String clientid;
 
   SFAParams({required this.network, required this.clientid});
@@ -35,7 +35,7 @@ class SFAParams {
   }
 }
 
-enum TorusNetwork { mainnet, testnet, cyan, aqua, celeste }
+enum Web3AuthNetwork { mainnet, testnet, cyan, aqua, celeste }
 
 class UserCancelledException implements Exception {}
 
