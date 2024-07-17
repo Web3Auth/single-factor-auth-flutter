@@ -112,7 +112,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     ElevatedButton(
-                      onPressed: _getKey(getAggregrateKey),
+                      onPressed: _getKey(getKey),
                       child: const Text('GetTorusKey'),
                     ),
                     ElevatedButton(
@@ -138,7 +138,7 @@ class _MyAppState extends State<MyApp> {
       try {
         final TorusKey response = await method();
         setState(() {
-          _result = "Private Key : ${response.privateKey}";
+          _result = "Public Add : ${response.publicAddress}";
           log(response.publicAddress);
         });
       } on MissingParamException catch (error) {
