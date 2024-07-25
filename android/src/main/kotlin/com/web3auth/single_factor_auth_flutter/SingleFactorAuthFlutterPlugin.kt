@@ -16,7 +16,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.torusresearch.fetchnodedetails.types.TorusNetwork
+import org.torusresearch.fetchnodedetails.types.Web3AuthNetwork
 
 /** SingleFactorAuthFlutterPlugin */
 class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
@@ -41,14 +41,14 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
-    private fun getNetwork(network: String): TorusNetwork {
+    private fun getNetwork(network: String): Web3AuthNetwork {
         return when (network) {
-            "mainnet" -> TorusNetwork.MAINNET
-            "testnet" -> TorusNetwork.TESTNET
-            "aqua" -> TorusNetwork.AQUA
-            "cyan" -> TorusNetwork.CYAN
-            "celeste" -> TorusNetwork.CELESTE
-            else -> TorusNetwork.MAINNET
+            "mainnet" -> Web3AuthNetwork.MAINNET
+            "testnet" -> Web3AuthNetwork.TESTNET
+            "aqua" -> Web3AuthNetwork.AQUA
+            "cyan" -> Web3AuthNetwork.CYAN
+            "celeste" -> Web3AuthNetwork.CELESTE
+            else -> Web3AuthNetwork.MAINNET
         }
     }
 

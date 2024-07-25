@@ -53,7 +53,8 @@ class _MyAppState extends State<MyApp> {
         await _singleFactorAuthFlutterPlugin.initialize();
     if (torusKey != null) {
       setState(() {
-        _result = "Private Key : ${torusKey.privateKey}";
+        _result =
+            "Public Add : ${torusKey.publicAddress} , Private Key : ${torusKey.privateKey}";
       });
     }
   }
@@ -112,7 +113,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     ElevatedButton(
-                      onPressed: _getKey(getAggregrateKey),
+                      onPressed: _getKey(getKey),
                       child: const Text('GetTorusKey'),
                     ),
                     ElevatedButton(
@@ -138,7 +139,8 @@ class _MyAppState extends State<MyApp> {
       try {
         final TorusKey response = await method();
         setState(() {
-          _result = "Private Key : ${response.privateKey}";
+          _result =
+              "Public Add : ${response.publicAddress} , Private Key : ${response.privateKey}";
           log(response.publicAddress);
         });
       } on MissingParamException catch (error) {

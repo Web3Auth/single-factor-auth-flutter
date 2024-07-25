@@ -6,8 +6,8 @@ PODS:
   - KeychainSwift (20.0.0)
   - single_factor_auth_flutter (0.0.1):
     - Flutter
-    - SingleFactorAuth (~> 5.0.0)
-  - SingleFactorAuth (5.0.0):
+    - SingleFactorAuth (= 6.0.0)
+  - SingleFactorAuth (6.0.0):
     - curvelib.swift (~> 1.0.1)
     - Torus-fetchNodeDetails (~> 6.0.1)
     - Torus-utils (~> 8.1.0)
@@ -49,12 +49,12 @@ SPEC CHECKSUMS:
   curvelib.swift: d0746ae82bee34016c06da3567a97e493b3c979f
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   KeychainSwift: 0ce6a4d13f7228054d1a71bb1b500448fb2ab837
-  single_factor_auth_flutter: 32a02b25ceb8405f3cedce4b675cfb906b8cb099
-  SingleFactorAuth: ee61a0969705e016871d0fb1fa65dd4a22e08316
+  single_factor_auth_flutter: c15c7a7a225399326d38c85de60ba3e1d5c5f82a
+  SingleFactorAuth: 2c25b70f7faac954fc15fe8f9598f80b09ca450e
   Torus-fetchNodeDetails: 6c349f47cbca36a4b3f276fe26d03c1b39b20949
   Torus-utils: 3ec4dba5ea50935ab129077adef4207af5a00225
   TorusSessionManager: 05a1a8f3265d0949a1a342c4ba2c52882445b614
 
 PODFILE CHECKSUM: d5c402b2f74646de5c7f24c1231886362b49b38f
 
-COCOAPODS: 1.14.2
+COCOAPODS: 1.14.3
