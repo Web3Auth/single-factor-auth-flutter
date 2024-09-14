@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
-  Web3AuthNetwork torusNetwork = Web3AuthNetwork.aqua;
+  Web3AuthNetwork torusNetwork = Web3AuthNetwork.mainnet;
 
   @override
   void initState() {
@@ -35,10 +35,14 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
       await init();
-      initialize();
+      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
+        initialize();
+      }
     } else if (Platform.isIOS) {
       await init();
-      initialize();
+      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
+        initialize();
+      }
     } else {}
   }
 
@@ -49,12 +53,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initialize() async {
     log("initialize() called");
-    final TorusKey? torusKey =
-        await _singleFactorAuthFlutterPlugin.initialize();
-    if (torusKey != null) {
+    final SFAKey? sfaKey = await _singleFactorAuthFlutterPlugin.initialize();
+    if (sfaKey != null) {
       setState(() {
         _result =
-            "Public Add : ${torusKey.publicAddress} , Private Key : ${torusKey.privateKey}";
+            "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
       });
     }
   }
@@ -134,10 +137,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _getKey(Future<TorusKey> Function() method) {
+  VoidCallback _getKey(Future<SFAKey> Function() method) {
     return () async {
       try {
-        final TorusKey response = await method();
+        final SFAKey response = await method();
         setState(() {
           _result =
               "Public Add : ${response.publicAddress} , Private Key : ${response.privateKey}";
@@ -155,7 +158,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initialize() async {
     try {
-      final TorusKey? response =
+      final SFAKey? response =
           await _singleFactorAuthFlutterPlugin.initialize();
       setState(() {
         _result = "Private Key : ${response?.privateKey}";
@@ -168,24 +171,11 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<TorusKey> getKey() {
-    return _singleFactorAuthFlutterPlugin.getKey(
-      LoginParams(
+  Future<SFAKey> getKey() {
+    return _singleFactorAuthFlutterPlugin.connect(LoginParams(
         verifier: 'torus-test-health',
         verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),
-      ),
-    );
-  }
-
-  Future<TorusKey> getAggregrateKey() {
-    return _singleFactorAuthFlutterPlugin.getAggregateKey(
-      LoginParams(
-        verifier: 'torus-test-health',
-        verifierId: 'hello@tor.us',
-        idToken: Utils().es256Token("hello@tor.us"),
-        aggregateVerifier: 'torus-test-health-aggregate',
-      ),
-    );
+    ));
   }
 }

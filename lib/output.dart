@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-TorusKey torusKeyFromJson(String string) => TorusKey.fromJson(
+SFAKey sfaKeyFromJson(String string) => SFAKey.fromJson(
       jsonDecode(string),
     );
 
-class TorusKey {
+class SFAKey {
   final String privateKey;
   final String publicAddress;
 
-  TorusKey({required this.privateKey, required this.publicAddress});
+  SFAKey({required this.privateKey, required this.publicAddress});
 
-  factory TorusKey.fromJson(Map<String, dynamic> json) {
-    return TorusKey(
+  factory SFAKey.fromJson(Map<String, dynamic> json) {
+    return SFAKey(
       privateKey: json['privateKey'],
       publicAddress: json['publicAddress'],
     );
