@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
-  Web3AuthNetwork torusNetwork = Web3AuthNetwork.mainnet;
+  Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.mainnet;
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> init() async {
     await _singleFactorAuthFlutterPlugin
-        .init(SFAParams(network: torusNetwork, clientid: 'YOUR_CLIENT_ID'));
+        .init(SFAParams(network: web3AuthNetwork, clientid: 'YOUR_CLIENT_ID'));
   }
 
   Future<void> initialize() async {
@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     const Text(
-                      'Get TorusKey',
+                      'Get Web3AuthKey',
                       style: TextStyle(fontSize: 12),
                     ),
                     const SizedBox(
@@ -117,7 +117,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     ElevatedButton(
                       onPressed: _getKey(getKey),
-                      child: const Text('GetTorusKey'),
+                      child: const Text('Web3AuthKey'),
                     ),
                     ElevatedButton(
                       onPressed: () => _initialize(),

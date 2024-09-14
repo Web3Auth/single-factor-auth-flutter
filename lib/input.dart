@@ -35,7 +35,15 @@ class SFAParams {
   }
 }
 
-enum Web3AuthNetwork { mainnet, testnet, cyan, aqua, celeste }
+enum Web3AuthNetwork {
+  mainnet,
+  testnet,
+  cyan,
+  aqua,
+  celeste,
+  sapphire_testnet,
+  sapphire_mainnet
+}
 
 class UserCancelledException implements Exception {}
 
