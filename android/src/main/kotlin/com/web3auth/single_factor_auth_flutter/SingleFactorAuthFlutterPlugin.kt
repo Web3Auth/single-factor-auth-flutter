@@ -81,19 +81,9 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "initialize" -> {
                 try {
-                    Log.d(
-                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
-                        "#initializeCalled"
-                    )
-                    Log.d("packageName:", context.packageName)
                     val sfaKey = singleFactorAuth.initialize(context)
-                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#_initialize")
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
                     return if (sfaKey != null) {
-                        Log.d(
-                            "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
-                            sfaKey.toString()
-                        )
-                        Log.d("sfaKey", "reached here.")
                         prepareResultFromSFAkey(sfaKey)
                     } else {
                         ""
@@ -127,31 +117,6 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     val sfaKeyCF = singleFactorAuth.connect(loginParams, context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#connect")
                     val sfaKey = sfaKeyCF
-                    return prepareResult(sfaKey)
-                } catch (e: Throwable) {
-                    throw Error(e)
-                }
-            }
-
-            "getAggregateTorusKey" -> {
-                try {
-                    val initArgs = call.arguments<String>()
-                    val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                    loginParams = LoginParams(
-                        params.aggregateVerifier.toString(), params.verifierId,
-                        params.idToken,
-                        arrayOf(
-                            TorusSubVerifierInfo(
-                                params.verifier,
-                                params.idToken
-                            )
-                        )
-                    )
-                    val sfaKey = singleFactorAuth.connect(loginParams, context)
-                    Log.d(
-                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
-                        "#getAggregateTorusKey"
-                    )
                     return prepareResult(sfaKey)
                 } catch (e: Throwable) {
                     throw Error(e)
