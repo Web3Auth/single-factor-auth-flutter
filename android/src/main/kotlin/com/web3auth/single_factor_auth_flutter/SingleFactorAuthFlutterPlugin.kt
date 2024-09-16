@@ -48,6 +48,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "aqua" -> Web3AuthNetwork.AQUA
             "cyan" -> Web3AuthNetwork.CYAN
             "celeste" -> Web3AuthNetwork.CELESTE
+            "sapphire_testnet" -> Web3AuthNetwork.SAPPHIRE_DEVNET
+            "sapphire_mainnet" -> Web3AuthNetwork.SAPPHIRE_MAINNET
             else -> Web3AuthNetwork.MAINNET
         }
     }

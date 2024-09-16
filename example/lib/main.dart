@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
-  Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.mainnet;
+  Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.sapphire_mainnet;
 
   @override
   void initState() {
