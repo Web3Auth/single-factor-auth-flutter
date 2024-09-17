@@ -47,8 +47,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> init() async {
-    await _singleFactorAuthFlutterPlugin
-        .init(SFAParams(network: web3AuthNetwork, clientid: 'YOUR_CLIENT_ID'));
+    await _singleFactorAuthFlutterPlugin.init(SFAParams(
+        network: web3AuthNetwork,
+        clientid: 'YOUR_CLIENT_ID',
+        sessionTime: 86400));
   }
 
   Future<void> initialize() async {

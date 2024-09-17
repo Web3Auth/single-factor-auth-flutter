@@ -24,13 +24,18 @@ class LoginParams {
 class SFAParams {
   final Web3AuthNetwork network;
   final String clientid;
+  final int sessionTime;
 
-  SFAParams({required this.network, required this.clientid});
+  SFAParams(
+      {required this.network,
+      required this.clientid,
+      this.sessionTime = 86400});
 
   Map<String, dynamic> toJson() {
     return {
       'network': network.name,
       'clientid': clientid,
+      'sessionTime': sessionTime,
     };
   }
 }
