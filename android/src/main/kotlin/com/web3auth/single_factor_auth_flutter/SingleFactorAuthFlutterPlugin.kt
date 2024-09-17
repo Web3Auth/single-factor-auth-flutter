@@ -77,7 +77,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 val initArgs = call.arguments<String>()
                 val params = gson.fromJson(initArgs, SFAOptions::class.java)
                 sfaParams =
-                    SFAParams(getNetwork(params.network), params.clientid, params.sessionTime)
+                    SFAParams(getNetwork(params.network), params.clientId, params.sessionTime)
                 singleFactorAuth = SingleFactorAuth(sfaParams, context)
                 return null
             }
