@@ -111,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     const Text(
-                      'Get Web3AuthKey',
+                      'Get SFAKey',
                       style: TextStyle(fontSize: 12),
                     ),
                     const SizedBox(
@@ -119,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     ElevatedButton(
                       onPressed: _getKey(getKey),
-                      child: const Text('Web3AuthKey'),
+                      child: const Text('Get SFAKey'),
                     ),
                     ElevatedButton(
                       onPressed: () => _initialize(),
@@ -163,7 +163,8 @@ class _MyAppState extends State<MyApp> {
       final SFAKey? response =
           await _singleFactorAuthFlutterPlugin.initialize();
       setState(() {
-        _result = "Private Key : ${response?.privateKey}";
+        _result =
+            "Public Add : ${response?.publicAddress} , Private Key : ${response?.privateKey}";
         log(response!.publicAddress);
       });
     } on PrivateKeyNotGeneratedException {

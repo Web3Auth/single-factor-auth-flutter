@@ -86,8 +86,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 try {
                     val sfaKey = singleFactorAuth.initialize(context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
-                    return if (sfaKey != null) {
-                        prepareResultFromSFAkey(sfaKey)
+                    return if (sfaKey.get() != null) {
+                        prepareResultFromSFAkey(sfaKey.get())
                     } else {
                         ""
                     }
@@ -127,7 +127,16 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             }
 
             "isSessionIdExists" -> {
-                return singleFactorAuth.isSessionIdExists()
+                try {
+                    val result = singleFactorAuth.isSessionIdExists()
+                    Log.d(
+                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
+                        "#isSessionIdExists"
+                    )
+                    return result
+                } catch (e: Throwable) {
+                    throw Error(e)
+                }
             }
         }
         throw NotImplementedError()
