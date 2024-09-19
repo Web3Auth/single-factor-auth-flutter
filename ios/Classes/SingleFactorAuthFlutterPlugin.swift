@@ -16,21 +16,25 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
     private func getNetwork(_ network: String) -> Web3AuthNetwork {
         switch network {
         case "mainnet":
-            return Web3AuthNetwork.MAINNET
+            return .legacy(.MAINNET)
         case "testnet":
-            return Web3AuthNetwork.TESTNET
+            return .legacy(.TESTNET)
         case "aqua":
-            return Web3AuthNetwork.AQUA
+            return .legacy(.AQUA)
         case "cyan":
-            return Web3AuthNetwork.CYAN
+            return .legacy(.CYAN)
+        case "sappire_devnet":
+            return .sapphire(.SAPPHIRE_DEVNET)
+        case "sapphire_mainnet":
+            return .sapphire(.SAPPHIRE_MAINNET)
         default:
-            return Web3AuthNetwork.MAINNET
+            return .sapphire(.SAPPHIRE_MAINNET)
         }
     }
     
     var decoder = JSONDecoder()
     var encoder = JSONEncoder()
-    var singleFactorAuthArgs: SingleFactorAuthArgs?
+    var sfaParams: SFAParams?
     var singleFactorAuth: SingleFactorAuth?
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -47,13 +51,14 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
                 let params = try self.decoder.decode(InitParams.self, from: data)
                 
-                singleFactorAuthArgs = SingleFactorAuthArgs(
-                    web3AuthClientId: params.clientid,
-                    network: self.getNetwork(params.network)
+                sfaParams = SFAParams(
+                    web3AuthClientId: params.clientId,
+                    network: self.getNetwork(params.network),
+                    sessionTime: params.sessionTime ?? 86400
                 )
                 
-                let singleFactorAuth =  SingleFactorAuth(
-                    singleFactorAuthArgs: singleFactorAuthArgs!
+                let singleFactorAuth =  try SingleFactorAuth(
+                    params: sfaParams!
                 )
                 
                 self.singleFactorAuth = singleFactorAuth
@@ -72,23 +77,38 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     result(throwKeyNotGeneratedError())
                 }
                 
-            case "getTorusKey":
+            case "connect":
                 let args = call.arguments as? String
                 guard let data = args?.data(using: .utf8) else {
                     return result(throwKeyNotGeneratedError())
                 }
 
                 let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
-                
-                let loginParams = LoginParams(
-                    verifier: params.verifier,
-                    verifierId: params.verifierId,
-                    idToken: params.idToken
-                )
+
+                let loginParams: LoginParams
+                if params.aggregateVerifier?.isEmpty ?? true {
+                    loginParams = LoginParams(
+                        verifier: params.verifier,
+                        verifierId: params.verifierId,
+                        idToken: params.idToken
+                    )
+                } else {
+                    loginParams = LoginParams(
+                        verifier: params.aggregateVerifier!,
+                        verifierId: params.verifierId,
+                        idToken: params.idToken,
+                        subVerifierInfoArray: [
+                            TorusSubVerifierInfo(
+                                verifier: params.verifier,
+                                idToken: params.idToken
+                            )
+                        ]
+                    )
+                }
                 
                 do {
                   
-                    let torusKeyCF = try await singleFactorAuth?.getKey(
+                    let torusKeyCF = try await singleFactorAuth?.connect(
                         loginParams: loginParams
                     )
                     
@@ -99,42 +119,20 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     result(throwKeyNotGeneratedError())
                 }
                 break
-                
-            case "getAggregateTorusKey":
-                let args = call.arguments as? String
-                guard let data = args?.data(using: .utf8) else {
-                    return result(throwKeyNotGeneratedError())
-                }
-                
-                let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
-                
-                guard let aggregateVerifier = params.aggregateVerifier else {
-                   return result(throwParamMissingError(param: "aggregateVerifier"))
-                }
-                
-                let loginParams = LoginParams(
-                    verifier: params.aggregateVerifier!,
-                    verifierId: params.verifierId,
-                    idToken: params.idToken,
-                    subVerifierInfoArray: [
-                        TorusSubVerifierInfo(
-                            verifier: params.verifier,
-                            idToken: params.idToken
-                        )
-                    ])
-                
+
+            case "isSessionIdExists":
                 do {
-                    let torusKeyCF = try await singleFactorAuth?.getKey(
-                        loginParams: loginParams
-                    )
-                    
-                    let resultData = try encoder.encode(torusKeyCF)
-                    let resultJson = String(decoding: resultData, as: UTF8.self)
-                    return result(resultJson)
+                    if singleFactorAuth == nil {
+                        return result(false)
+                    } else {
+                        let isSessionExists = try await singleFactorAuth?.isSessionIdExists() ?? false
+                        return result(isSessionExists)
+                    }
                 } catch {
                     result(throwKeyNotGeneratedError())
                 }
                 break
+
             default:
                 break
             }
@@ -157,7 +155,8 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
 
 struct InitParams: Codable {
     var network: String
-    var clientid: String
+    var clientId: String
+    var sessionTime: Int? = 86400
 }
 
 struct getTorusKeyParams: Codable {

@@ -6,8 +6,8 @@ import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.web3auth.singlefactorauth.SingleFactorAuth
 import com.web3auth.singlefactorauth.types.LoginParams
-import com.web3auth.singlefactorauth.types.SingleFactorAuthArgs
-import com.web3auth.singlefactorauth.types.TorusKey
+import com.web3auth.singlefactorauth.types.SFAKey
+import com.web3auth.singlefactorauth.types.SFAParams
 import com.web3auth.singlefactorauth.types.TorusSubVerifierInfo
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -27,7 +27,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
     private lateinit var singleFactorAuth: SingleFactorAuth
-    private lateinit var singleFactorAuthArgs: SingleFactorAuthArgs
+    private lateinit var sfaParams: SFAParams
     private lateinit var loginParams: LoginParams
     private var gson: Gson = Gson()
 
@@ -48,6 +48,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "aqua" -> Web3AuthNetwork.AQUA
             "cyan" -> Web3AuthNetwork.CYAN
             "celeste" -> Web3AuthNetwork.CELESTE
+            "sapphire_testnet" -> Web3AuthNetwork.SAPPHIRE_DEVNET
+            "sapphire_mainnet" -> Web3AuthNetwork.SAPPHIRE_MAINNET
             else -> Web3AuthNetwork.MAINNET
         }
     }
@@ -73,19 +75,19 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "init" -> {
                 val initArgs = call.arguments<String>()
-                val params = gson.fromJson(initArgs, SFAParams::class.java)
-                singleFactorAuthArgs = SingleFactorAuthArgs(getNetwork(params.network), params.clientid)
-                singleFactorAuth = SingleFactorAuth(singleFactorAuthArgs)
+                val params = gson.fromJson(initArgs, SFAOptions::class.java)
+                sfaParams =
+                    SFAParams(getNetwork(params.network), params.clientId, params.sessionTime)
+                singleFactorAuth = SingleFactorAuth(sfaParams, context)
                 return null
             }
 
             "initialize" -> {
                 try {
-                    val torusKeyCF = singleFactorAuth.initialize(context)
+                    val sfaKey = singleFactorAuth.initialize(context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
-                    return if (torusKeyCF.get() != null) {
-                        val torusKey = torusKeyCF.get()
-                        prepareResult(torusKey)
+                    return if (sfaKey.get() != null) {
+                        prepareResultFromSFAkey(sfaKey.get())
                     } else {
                         ""
                     }
@@ -94,43 +96,44 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
-            "getTorusKey" -> {
+            "connect" -> {
                 try {
                     val initArgs = call.arguments<String>()
                     val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                    loginParams = LoginParams(
-                        params.verifier, params.verifierId,
-                        params.idToken
-                    )
-                    val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
-                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#getTorusKey")
-                    val torusKey = torusKeyCF.get()
-                    return prepareResult(torusKey)
+                    if (params.aggregateVerifier.isNullOrEmpty()) {
+                        loginParams = LoginParams(
+                            params.verifier, params.verifierId,
+                            params.idToken
+                        )
+                    } else {
+                        loginParams = LoginParams(
+                            params.aggregateVerifier, params.verifierId,
+                            params.idToken,
+                            arrayOf(
+                                TorusSubVerifierInfo(
+                                    params.verifier,
+                                    params.idToken
+                                )
+                            )
+                        )
+                    }
+                    val sfaKeyCF = singleFactorAuth.connect(loginParams, context)
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#connect")
+                    val sfaKey = sfaKeyCF
+                    return prepareResult(sfaKey)
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
             }
 
-            "getAggregateTorusKey" -> {
+            "isSessionIdExists" -> {
                 try {
-                    val initArgs = call.arguments<String>()
-                    val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                    loginParams = LoginParams(
-                        params.aggregateVerifier.toString(), params.verifierId,
-                        params.idToken,
-                        arrayOf(
-                            TorusSubVerifierInfo(
-                                params.verifier,
-                                params.idToken
-                            )
-                        )
-                    )
-                    val torusKeyCF = singleFactorAuth.getKey(loginParams, context)
+                    val result = singleFactorAuth.isSessionIdExists()
                     Log.d(
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
-                        "#getAggregateTorusKey"
+                        "#isSessionIdExists"
                     )
-                    return prepareResult(torusKeyCF.get())
+                    return result
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
@@ -139,10 +142,17 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
         throw NotImplementedError()
     }
 
-    private fun prepareResult(torusKey: TorusKey): String {
+    private fun prepareResult(sfaKey: SFAKey?): String {
         val hashMap: HashMap<String, String> = HashMap<String, String>(2)
-        hashMap["privateKey"] = torusKey.privateKey?.toString(16) as String
-        hashMap["publicAddress"] = torusKey.publicAddress as String
+        hashMap["privateKey"] = sfaKey?.getPrivateKey() as String
+        hashMap["publicAddress"] = sfaKey?.getPublicAddress() as String
+        return gson.toJson(hashMap)
+    }
+
+    private fun prepareResultFromSFAkey(sfaKey: SFAKey): String {
+        val hashMap: HashMap<String, String> = HashMap<String, String>(2)
+        hashMap["privateKey"] = sfaKey.getPrivateKey() as String ?: ""
+        hashMap["publicAddress"] = sfaKey.getPublicAddress() as String ?: ""
         return gson.toJson(hashMap)
     }
 }

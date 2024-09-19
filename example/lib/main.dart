@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
   final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
-  Web3AuthNetwork torusNetwork = Web3AuthNetwork.aqua;
+  Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.sapphire_mainnet;
 
   @override
   void initState() {
@@ -35,26 +35,31 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
       await init();
-      initialize();
+      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
+        initialize();
+      }
     } else if (Platform.isIOS) {
       await init();
-      initialize();
+      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
+        initialize();
+      }
     } else {}
   }
 
   Future<void> init() async {
-    await _singleFactorAuthFlutterPlugin
-        .init(SFAParams(network: torusNetwork, clientid: 'YOUR_CLIENT_ID'));
+    await _singleFactorAuthFlutterPlugin.init(SFAParams(
+        network: web3AuthNetwork,
+        clientId: 'YOUR_CLIENT_ID',
+        sessionTime: 86400));
   }
 
   Future<void> initialize() async {
     log("initialize() called");
-    final TorusKey? torusKey =
-        await _singleFactorAuthFlutterPlugin.initialize();
-    if (torusKey != null) {
+    final SFAKey? sfaKey = await _singleFactorAuthFlutterPlugin.initialize();
+    if (sfaKey != null) {
       setState(() {
         _result =
-            "Public Add : ${torusKey.publicAddress} , Private Key : ${torusKey.privateKey}";
+            "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
       });
     }
   }
@@ -106,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                       height: 20,
                     ),
                     const Text(
-                      'Get TorusKey',
+                      'Get SFAKey',
                       style: TextStyle(fontSize: 12),
                     ),
                     const SizedBox(
@@ -114,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     ElevatedButton(
                       onPressed: _getKey(getKey),
-                      child: const Text('GetTorusKey'),
+                      child: const Text('Get SFAKey'),
                     ),
                     ElevatedButton(
                       onPressed: () => _initialize(),
@@ -134,10 +139,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _getKey(Future<TorusKey> Function() method) {
+  VoidCallback _getKey(Future<SFAKey> Function() method) {
     return () async {
       try {
-        final TorusKey response = await method();
+        final SFAKey response = await method();
         setState(() {
           _result =
               "Public Add : ${response.publicAddress} , Private Key : ${response.privateKey}";
@@ -155,10 +160,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initialize() async {
     try {
-      final TorusKey? response =
+      final SFAKey? response =
           await _singleFactorAuthFlutterPlugin.initialize();
       setState(() {
-        _result = "Private Key : ${response?.privateKey}";
+        _result =
+            "Public Add : ${response?.publicAddress} , Private Key : ${response?.privateKey}";
         log(response!.publicAddress);
       });
     } on PrivateKeyNotGeneratedException {
@@ -168,24 +174,11 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<TorusKey> getKey() {
-    return _singleFactorAuthFlutterPlugin.getKey(
-      LoginParams(
+  Future<SFAKey> getKey() {
+    return _singleFactorAuthFlutterPlugin.connect(LoginParams(
         verifier: 'torus-test-health',
         verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),
-      ),
-    );
-  }
-
-  Future<TorusKey> getAggregrateKey() {
-    return _singleFactorAuthFlutterPlugin.getAggregateKey(
-      LoginParams(
-        verifier: 'torus-test-health',
-        verifierId: 'hello@tor.us',
-        idToken: Utils().es256Token("hello@tor.us"),
-        aggregateVerifier: 'torus-test-health-aggregate',
-      ),
-    );
+    ));
   }
 }

@@ -21,14 +21,14 @@ class SingleFactAuthFlutter {
     await _channel.invokeMethod('init', jsonEncode(initParamsJson));
   }
 
-  Future<TorusKey?> initialize() async {
+  Future<SFAKey?> initialize() async {
     try {
-      final String? torusKeyJson = await _channel.invokeMethod(
+      final String? sfaKeyJson = await _channel.invokeMethod(
         'initialize',
       );
 
-      if (torusKeyJson != null) {
-        return torusKeyFromJson(torusKeyJson);
+      if (sfaKeyJson != null) {
+        return sfaKeyFromJson(sfaKeyJson);
       }
       return null;
     } on PlatformException catch (e) {
@@ -36,30 +36,24 @@ class SingleFactAuthFlutter {
     }
   }
 
-  Future<TorusKey> getKey(LoginParams loginParams) async {
+  Future<SFAKey> connect(LoginParams loginParams) async {
     try {
       Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
       final String torusKeyJson = await _channel.invokeMethod(
-        'getTorusKey',
+        'connect',
         jsonEncode(loginParams),
       );
-      return torusKeyFromJson(torusKeyJson);
+      return sfaKeyFromJson(torusKeyJson);
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
   }
 
-  Future<TorusKey> getAggregateKey(LoginParams loginParams) async {
+  Future<bool> isSessionIdExists() async {
     try {
-      Map<String, dynamic> loginParamsJson = loginParams.toJson();
-      loginParamsJson.removeWhere((key, value) => value == null);
-      final String torusKeyJson = await _channel.invokeMethod(
-        'getAggregateTorusKey',
-        jsonEncode(loginParams),
-      );
-
-      return torusKeyFromJson(torusKeyJson);
+      bool response = await _channel.invokeMethod('isSessionIdExists');
+      return response;
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
