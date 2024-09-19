@@ -121,12 +121,17 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 break
 
             case "isSessionIdExists":
-                    if(singleFactorAuth == nil) {
+                do {
+                    if singleFactorAuth == nil {
                         return result(false)
                     } else {
-                        return result(try await singleFactorAuth?.isSessionIdExists())
+                        let isSessionExists = try await singleFactorAuth?.isSessionIdExists() ?? false
+                        return result(isSessionExists)
                     }
-                 break
+                } catch {
+                    result(throwKeyNotGeneratedError())
+                }
+                break
 
             default:
                 break
