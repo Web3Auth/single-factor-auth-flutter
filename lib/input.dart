@@ -46,7 +46,7 @@ enum Web3AuthNetwork {
   cyan,
   aqua,
   celeste,
-  sapphire_testnet,
+  sapphire_devnet,
   sapphire_mainnet
 }
 
