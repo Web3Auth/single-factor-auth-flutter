@@ -23,7 +23,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
             return .legacy(.AQUA)
         case "cyan":
             return .legacy(.CYAN)
-        case "sappire_devnet":
+        case "sapphire_devnet":
             return .sapphire(.SAPPHIRE_DEVNET)
         case "sapphire_mainnet":
             return .sapphire(.SAPPHIRE_MAINNET)
