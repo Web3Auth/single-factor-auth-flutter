@@ -35,14 +35,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
       await init();
-      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
-        initialize();
-      }
+      initialize();
     } else if (Platform.isIOS) {
       await init();
-      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
-        initialize();
-      }
+      initialize();
     } else {}
   }
 
@@ -179,6 +175,17 @@ class _MyAppState extends State<MyApp> {
         verifier: 'torus-test-health',
         verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),
+    ));
+  }
+
+  Future<SFAKey> getAggregateKey() {
+    return _singleFactorAuthFlutterPlugin.connect(LoginParams(
+        verifier: 'torus-aggregate-sapphire-mainnet',
+        verifierId: 'devnettestuser@tor.us',
+        idToken: Utils().es256Token("devnettestuser@tor.us"),
+        subVerifierInfoArray: [
+          TorusSubVerifierInfo('torus-test-health', Utils().es256Token("devnettestuser@tor.us"))
+        ]
     ));
   }
 }

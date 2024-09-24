@@ -42,18 +42,9 @@ class SingleFactAuthFlutter {
       loginParamsJson.removeWhere((key, value) => value == null);
       final String torusKeyJson = await _channel.invokeMethod(
         'connect',
-        jsonEncode(loginParams),
+        jsonEncode(loginParamsJson),
       );
       return sfaKeyFromJson(torusKeyJson);
-    } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
-    }
-  }
-
-  Future<bool> isSessionIdExists() async {
-    try {
-      bool response = await _channel.invokeMethod('isSessionIdExists');
-      return response;
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
