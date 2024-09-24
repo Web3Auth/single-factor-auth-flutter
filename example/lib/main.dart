@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
+  final _singleFactorAuthFlutterPlugin = SingleFactorAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
   Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.sapphire_mainnet;

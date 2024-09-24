@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/services.dart';
 import 'package:single_factor_auth_flutter/input.dart';
@@ -7,7 +8,7 @@ import 'package:single_factor_auth_flutter/output.dart';
 
 import 'single_factor_auth_flutter_platform_interface.dart';
 
-class SingleFactAuthFlutter {
+class SingleFactorAuthFlutter {
   static const MethodChannel _channel =
       MethodChannel('single_factor_auth_flutter');
 
@@ -45,6 +46,15 @@ class SingleFactAuthFlutter {
         jsonEncode(loginParamsJson),
       );
       return sfaKeyFromJson(torusKeyJson);
+    } on PlatformException catch (e) {
+      throw _hanldePlatformException(e);
+    }
+  }
+
+  Future<bool> logout() async {
+    try {
+      final bool result = await _channel.invokeMethod('logout');
+      return result;
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
