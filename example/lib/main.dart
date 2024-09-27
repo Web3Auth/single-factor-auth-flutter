@@ -170,6 +170,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  //Get key example
   Future<SFAKey> getKey() {
     return _singleFactorAuthFlutterPlugin.connect(LoginParams(
         verifier: 'torus-test-health',
@@ -178,6 +179,7 @@ class _MyAppState extends State<MyApp> {
     ));
   }
 
+  //Aggregate verifier key example
   Future<SFAKey> getAggregateKey() {
     return _singleFactorAuthFlutterPlugin.connect(LoginParams(
         verifier: 'torus-aggregate-sapphire-mainnet',
@@ -187,5 +189,10 @@ class _MyAppState extends State<MyApp> {
           TorusSubVerifierInfo('torus-test-health', Utils().es256Token("devnettestuser@tor.us"))
         ]
     ));
+  }
+
+  //Logout example
+  Future<bool> logout() {
+    return _singleFactorAuthFlutterPlugin.logout();
   }
 }
