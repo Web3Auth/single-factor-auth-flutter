@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/services.dart';
 import 'package:single_factor_auth_flutter/input.dart';
@@ -7,7 +8,7 @@ import 'package:single_factor_auth_flutter/output.dart';
 
 import 'single_factor_auth_flutter_platform_interface.dart';
 
-class SingleFactAuthFlutter {
+class SingleFactorAuthFlutter {
   static const MethodChannel _channel =
       MethodChannel('single_factor_auth_flutter');
 
@@ -42,7 +43,7 @@ class SingleFactAuthFlutter {
       loginParamsJson.removeWhere((key, value) => value == null);
       final String torusKeyJson = await _channel.invokeMethod(
         'connect',
-        jsonEncode(loginParams),
+        jsonEncode(loginParamsJson),
       );
       return sfaKeyFromJson(torusKeyJson);
     } on PlatformException catch (e) {
@@ -50,10 +51,10 @@ class SingleFactAuthFlutter {
     }
   }
 
-  Future<bool> isSessionIdExists() async {
+  Future<bool> logout() async {
     try {
-      bool response = await _channel.invokeMethod('isSessionIdExists');
-      return response;
+      final bool result = await _channel.invokeMethod('logout');
+      return result;
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }

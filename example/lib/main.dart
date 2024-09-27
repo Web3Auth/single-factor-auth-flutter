@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
+  final _singleFactorAuthFlutterPlugin = SingleFactorAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
   Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.sapphire_mainnet;
@@ -35,14 +35,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
       await init();
-      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
-        initialize();
-      }
+      initialize();
     } else if (Platform.isIOS) {
       await init();
-      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
-        initialize();
-      }
+      initialize();
     } else {}
   }
 
@@ -174,11 +170,29 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  //Get key example
   Future<SFAKey> getKey() {
     return _singleFactorAuthFlutterPlugin.connect(LoginParams(
         verifier: 'torus-test-health',
         verifierId: 'hello@tor.us',
         idToken: Utils().es256Token("hello@tor.us"),
     ));
+  }
+
+  //Aggregate verifier key example
+  Future<SFAKey> getAggregateKey() {
+    return _singleFactorAuthFlutterPlugin.connect(LoginParams(
+        verifier: 'torus-aggregate-sapphire-mainnet',
+        verifierId: 'devnettestuser@tor.us',
+        idToken: Utils().es256Token("devnettestuser@tor.us"),
+        subVerifierInfoArray: [
+          TorusSubVerifierInfo('torus-test-health', Utils().es256Token("devnettestuser@tor.us"))
+        ]
+    ));
+  }
+
+  //Logout example
+  Future<bool> logout() {
+    return _singleFactorAuthFlutterPlugin.logout();
   }
 }

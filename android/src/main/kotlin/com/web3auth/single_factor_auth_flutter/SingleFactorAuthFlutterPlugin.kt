@@ -99,24 +99,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "connect" -> {
                 try {
                     val initArgs = call.arguments<String>()
-                    val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                    if (params.aggregateVerifier.isNullOrEmpty()) {
-                        loginParams = LoginParams(
-                            params.verifier, params.verifierId,
-                            params.idToken
-                        )
-                    } else {
-                        loginParams = LoginParams(
-                            params.aggregateVerifier, params.verifierId,
-                            params.idToken,
-                            arrayOf(
-                                TorusSubVerifierInfo(
-                                    params.verifier,
-                                    params.idToken
-                                )
-                            )
-                        )
-                    }
+                    val loginParams = gson.fromJson(initArgs, LoginParams::class.java)
                     val sfaKeyCF = singleFactorAuth.connect(loginParams, context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#connect")
                     val sfaKey = sfaKeyCF
@@ -126,14 +109,11 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 }
             }
 
-            "isSessionIdExists" -> {
+            "logout" -> {
                 try {
-                    val result = singleFactorAuth.isSessionIdExists()
-                    Log.d(
-                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
-                        "#isSessionIdExists"
-                    )
-                    return result
+                    val logoutCF = singleFactorAuth.logout(context)
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#logout")
+                    return logoutCF
                 } catch (e: Throwable) {
                     throw Error(e)
                 }

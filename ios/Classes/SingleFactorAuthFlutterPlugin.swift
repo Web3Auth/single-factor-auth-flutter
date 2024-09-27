@@ -63,6 +63,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
                 self.singleFactorAuth = singleFactorAuth
                 return result(nil)
+                break
                 
             case "initialize":
                 do {
@@ -76,6 +77,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 } catch {
                     result(throwKeyNotGeneratedError())
                 }
+                break
                 
             case "connect":
                 let args = call.arguments as? String
@@ -83,28 +85,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     return result(throwKeyNotGeneratedError())
                 }
 
-                let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
-
-                let loginParams: LoginParams
-                if params.aggregateVerifier?.isEmpty ?? true {
-                    loginParams = LoginParams(
-                        verifier: params.verifier,
-                        verifierId: params.verifierId,
-                        idToken: params.idToken
-                    )
-                } else {
-                    loginParams = LoginParams(
-                        verifier: params.aggregateVerifier!,
-                        verifierId: params.verifierId,
-                        idToken: params.idToken,
-                        subVerifierInfoArray: [
-                            TorusSubVerifierInfo(
-                                verifier: params.verifier,
-                                idToken: params.idToken
-                            )
-                        ]
-                    )
-                }
+                let loginParams = try self.decoder.decode(LoginParams.self, from: data)
                 
                 do {
                   
@@ -120,14 +101,10 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 }
                 break
 
-            case "isSessionIdExists":
+            case "logout":
                 do {
-                    if singleFactorAuth == nil {
-                        return result(false)
-                    } else {
-                        let isSessionExists = try await singleFactorAuth?.isSessionIdExists() ?? false
-                        return result(isSessionExists)
-                    }
+                    let logoutResult = try await singleFactorAuth?.logout()
+                    return result(logoutResult)
                 } catch {
                     result(throwKeyNotGeneratedError())
                 }
