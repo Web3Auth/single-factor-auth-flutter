@@ -77,7 +77,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(
                                 code: (error as NSError).domain,
                                 message: error.localizedDescription,
-                                details: nil
+                                details: String(describing: error)
                            ))
                 }
                 
@@ -123,7 +123,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(
                                 code: (error as NSError).domain,
                                 message: error.localizedDescription,
-                                details: nil
+                                details: String(describing: error)
                             ))
                 }
                 break
@@ -140,7 +140,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     result(FlutterError(
                                  code: (error as NSError).domain,
                                  message: error.localizedDescription,
-                                 details: nil
+                                 details: String(describing: error)
                            ))
                 }
                 break
