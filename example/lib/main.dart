@@ -51,8 +51,8 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initialize() async {
     log("initialize() called");
-    final SFAKey? sfaKey = await _singleFactorAuthFlutterPlugin.initialize();
-    if (sfaKey != null) {
+    final SFAKey sfaKey = await _singleFactorAuthFlutterPlugin.getSessionData();
+    if (sfaKey.error == null) {
       setState(() {
         _result =
             "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
@@ -156,13 +156,14 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initialize() async {
     try {
-      final SFAKey? response =
-          await _singleFactorAuthFlutterPlugin.initialize();
-      setState(() {
-        _result =
-            "Public Add : ${response?.publicAddress} , Private Key : ${response?.privateKey}";
-        log(response!.publicAddress);
-      });
+      final SFAKey sfaKey =
+          await _singleFactorAuthFlutterPlugin.getSessionData();
+      if (sfaKey.error == null) {
+        setState(() {
+          _result =
+              "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
+        });
+      }
     } on PrivateKeyNotGeneratedException {
       log("Private key not generated");
     } on UnKnownException {
