@@ -22,16 +22,9 @@ class SingleFactorAuthFlutter {
     await _channel.invokeMethod('init', jsonEncode(initParamsJson));
   }
 
-  Future<SFAKey?> initialize() async {
+  Future<void> initialize() async {
     try {
-      final String? sfaKeyJson = await _channel.invokeMethod(
-        'initialize',
-      );
-
-      if (sfaKeyJson != null) {
-        return sfaKeyFromJson(sfaKeyJson);
-      }
-      return null;
+      await _channel.invokeMethod('initialize');
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
@@ -45,6 +38,15 @@ class SingleFactorAuthFlutter {
         'connect',
         jsonEncode(loginParamsJson),
       );
+      return sfaKeyFromJson(torusKeyJson);
+    } on PlatformException catch (e) {
+      throw _hanldePlatformException(e);
+    }
+  }
+
+  Future<SFAKey> getSessionData() async {
+    try {
+      final String torusKeyJson = await _channel.invokeMethod('getSessionData');
       return sfaKeyFromJson(torusKeyJson);
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);

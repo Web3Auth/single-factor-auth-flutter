@@ -85,11 +85,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 try {
                     val sfaKey = singleFactorAuth.initialize(context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
-                    return if (sfaKey.get() != null) {
-                        prepareResultFromSFAkey(sfaKey.get()!!)
-                    } else {
-                        ""
-                    }
+                    return null
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
@@ -117,21 +113,42 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     throw Error(e)
                 }
             }
+
+            "getSessionData" -> {
+                try {
+                    Log.d(
+                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
+                        "#getSessionData"
+                    )
+                    singleFactorAuth.initialize(context).get()
+                    var sessionData = singleFactorAuth.getSessionData()
+                    var response = sessionData?.let { prepareResult(it) }
+                        ?: gson.toJson(mapOf("error" to "Session data is not available"))
+                    return response
+                } catch (e: Throwable) {
+                    Log.e(
+                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
+                        "Error retrieving session data",
+                        e
+                    )
+                    return gson.toJson(mapOf("error" to "Failed to retrieve session data"))
+                }
+            }
         }
         throw NotImplementedError()
     }
 
     private fun prepareResult(sfaKey: SessionData): String {
-        val hashMap: HashMap<String, String> = HashMap<String, String>(2)
-        hashMap["privateKey"] = sfaKey.privateKey as String
-        hashMap["publicAddress"] = sfaKey.publicAddress as String
+        val hashMap: HashMap<String, String> = HashMap(2)
+        hashMap["privateKey"] = sfaKey.privateKey ?: ""
+        hashMap["publicAddress"] = sfaKey.publicAddress ?: ""
         return gson.toJson(hashMap)
     }
 
     private fun prepareResultFromSFAkey(sfaKey: SessionData): String {
         val hashMap: HashMap<String, String> = HashMap(2)
-        hashMap["privateKey"] = sfaKey.privateKey ?: ""
-        hashMap["publicAddress"] = sfaKey.publicAddress ?: ""
+        hashMap["privateKey"] = sfaKey.privateKey
+        hashMap["publicAddress"] = sfaKey.publicAddress
         return gson.toJson(hashMap)
     }
 }
