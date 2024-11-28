@@ -1,23 +1,23 @@
 PODS:
   - BigInt (5.2.0)
-  - curvelib.swift (1.0.1)
+  - curvelib.swift (2.0.0)
   - Flutter (1.0.0)
+  - JWTDecode (3.2.0)
   - KeychainSwift (20.0.0)
   - single_factor_auth_flutter (0.0.1):
     - Flutter
-    - SingleFactorAuth (= 8.0.0)
-  - SingleFactorAuth (8.0.0):
-    - curvelib.swift (~> 1.0.1)
-    - Torus-fetchNodeDetails (~> 6.0.3)
-    - Torus-utils (~> 9.0.1)
-    - TorusSessionManager (~> 5.0.0)
-  - Torus-fetchNodeDetails (6.0.3):
+    - SingleFactorAuth (= 9.0.2)
+  - SingleFactorAuth (9.0.2):
+    - JWTDecode (~> 3.2)
+    - Torus-utils (~> 10.0.0)
+    - TorusSessionManager (~> 6.0.1)
+  - Torus-fetchNodeDetails (8.0.0):
     - BigInt (~> 5.2.0)
-  - Torus-utils (9.0.1):
-    - curvelib.swift (~> 1.0.1)
-    - Torus-fetchNodeDetails (~> 6.0.3)
-  - TorusSessionManager (5.0.0):
-    - curvelib.swift (~> 1.0.1)
+  - Torus-utils (10.0.0):
+    - curvelib.swift (~> 2.0.0)
+    - Torus-fetchNodeDetails (~> 8.0.0)
+  - TorusSessionManager (6.0.1):
+    - curvelib.swift (~> 2.0.0)
     - KeychainSwift (~> 20.0.0)
 
 DEPENDENCIES:
@@ -28,6 +28,7 @@ SPEC REPOS:
   trunk:
     - BigInt
     - curvelib.swift
+    - JWTDecode
     - KeychainSwift
     - SingleFactorAuth
     - Torus-fetchNodeDetails
@@ -42,14 +43,15 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BigInt: f668a80089607f521586bbe29513d708491ef2f7
-  curvelib.swift: d0746ae82bee34016c06da3567a97e493b3c979f
+  curvelib.swift: b9223e5cac801effed8a5fe8968e952b3fe427a5
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  JWTDecode: 7dae24cb9bf9b608eae61e5081029ec169bb5527
   KeychainSwift: 0ce6a4d13f7228054d1a71bb1b500448fb2ab837
-  single_factor_auth_flutter: 9617e5ffce9c0251bddb19cbe49293f921c13b79
-  SingleFactorAuth: 2bfa8ad0fe8d0023fffdf1a5f0c9634ca3ee66d8
-  Torus-fetchNodeDetails: 6c349f47cbca36a4b3f276fe26d03c1b39b20949
-  Torus-utils: 1d23e6eedf9ee7df9ecc2605b765ad68eb194f71
-  TorusSessionManager: 42c21f100d895976fabe3806cb9c575392f6e424
+  single_factor_auth_flutter: a406fab1682326a08a0b5ceac835a8934d0db9be
+  SingleFactorAuth: 0dd1e92f37b7175c6c1224afcde609615708a115
+  Torus-fetchNodeDetails: 2a5fbb222ec28af4128d64e4c2d520c7db456b78
+  Torus-utils: 4a1db3d9c1aa221df312ffa7ec154e7e4719850a
+  TorusSessionManager: 9c9871718233dc020ab4fde9bdf37802f01dae10
 
 PODFILE CHECKSUM: d5c402b2f74646de5c7f24c1231886362b49b38f
 

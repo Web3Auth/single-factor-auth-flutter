@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import FetchNodeDetails
 import SingleFactorAuth
 
 public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
@@ -16,25 +17,25 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
     private func getNetwork(_ network: String) -> Web3AuthNetwork {
         switch network {
         case "mainnet":
-            return .legacy(.MAINNET)
+            return .MAINNET
         case "testnet":
-            return .legacy(.TESTNET)
+            return .TESTNET
         case "aqua":
-            return .legacy(.AQUA)
+            return .AQUA
         case "cyan":
-            return .legacy(.CYAN)
+            return .CYAN
         case "sapphire_devnet":
-            return .sapphire(.SAPPHIRE_DEVNET)
+            return .SAPPHIRE_DEVNET
         case "sapphire_mainnet":
-            return .sapphire(.SAPPHIRE_MAINNET)
+            return .SAPPHIRE_MAINNET
         default:
-            return .sapphire(.SAPPHIRE_MAINNET)
+            return .SAPPHIRE_MAINNET
         }
     }
     
     var decoder = JSONDecoder()
     var encoder = JSONEncoder()
-    var sfaParams: SFAParams?
+    var web3AuthOptions: Web3AuthOptions?
     var singleFactorAuth: SingleFactorAuth?
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -51,14 +52,14 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
                 let params = try self.decoder.decode(InitParams.self, from: data)
                 
-                sfaParams = SFAParams(
-                    web3AuthClientId: params.clientId,
-                    network: self.getNetwork(params.network),
+                web3AuthOptions = Web3AuthOptions(
+                    clientId: params.clientId,
+                    web3AuthNetwork: self.getNetwork(params.network),
                     sessionTime: params.sessionTime ?? 86400
                 )
                 
                 let singleFactorAuth =  try SingleFactorAuth(
-                    params: sfaParams!
+                    params: web3AuthOptions!
                 )
                 
                 self.singleFactorAuth = singleFactorAuth
@@ -67,13 +68,8 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
             case "initialize":
                 do {
-                    guard let torusKeyCF = try await singleFactorAuth?.initialize() else {
-                        return result(nil)
-                    }
-                    
-                    let resultData: Data = try encoder.encode(torusKeyCF)
-                    let resultJson = String(decoding: resultData, as: UTF8.self)
-                    return result(resultJson)
+                    try await singleFactorAuth?.initialize()
+                    return result(nil)
                 } catch {
                     result(throwKeyNotGeneratedError())
                 }
@@ -103,11 +99,14 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
 
             case "logout":
                 do {
-                    let logoutResult = try await singleFactorAuth?.logout()
-                    return result(logoutResult)
+                    try await singleFactorAuth?.logout()
+                    return result(nil)
                 } catch {
                     result(throwKeyNotGeneratedError())
                 }
+                break
+
+            case "getSessionData":
                 break
 
             default:
