@@ -6,8 +6,8 @@ PODS:
   - KeychainSwift (20.0.0)
   - single_factor_auth_flutter (0.0.1):
     - Flutter
-    - SingleFactorAuth (= 9.0.2)
-  - SingleFactorAuth (9.0.2):
+    - SingleFactorAuth (= 9.0.3)
+  - SingleFactorAuth (9.0.3):
     - JWTDecode (~> 3.2)
     - Torus-utils (~> 10.0.0)
     - TorusSessionManager (~> 6.0.1)
@@ -47,8 +47,8 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   JWTDecode: 7dae24cb9bf9b608eae61e5081029ec169bb5527
   KeychainSwift: 0ce6a4d13f7228054d1a71bb1b500448fb2ab837
-  single_factor_auth_flutter: a406fab1682326a08a0b5ceac835a8934d0db9be
-  SingleFactorAuth: 0dd1e92f37b7175c6c1224afcde609615708a115
+  single_factor_auth_flutter: 0d99b60b1e56e4c8a36754519a15a142e97db518
+  SingleFactorAuth: 5f7af5e3370769455f7543453cbf398da1ffb754
   Torus-fetchNodeDetails: 2a5fbb222ec28af4128d64e4c2d520c7db456b78
   Torus-utils: 4a1db3d9c1aa221df312ffa7ec154e7e4719850a
   TorusSessionManager: 9c9871718233dc020ab4fde9bdf37802f01dae10

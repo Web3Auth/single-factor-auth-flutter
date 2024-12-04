@@ -107,6 +107,15 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 break
 
             case "getSessionData":
+                do {
+                    try await singleFactorAuth?.initialize()
+                    let sessionData = try await singleFactorAuth?.getSessionData()
+                    let resultData = try encoder.encode(sessionData)
+                    let resultJson = String(decoding: resultData, as: UTF8.self)
+                    return result(resultJson)
+                } catch {
+                    result(throwKeyNotGeneratedError())
+                }
                 break
 
             default:
