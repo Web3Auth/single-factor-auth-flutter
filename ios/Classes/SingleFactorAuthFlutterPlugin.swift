@@ -110,7 +110,11 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     try await singleFactorAuth?.logout()
                     return result(nil)
                 } catch {
-                    result(throwKeyNotGeneratedError())
+                    result(FlutterError(
+                                 code: (error as NSError).domain,
+                                 message: error.localizedDescription,
+                                 details: String(describing: error)
+                           ))
                 }
                 break
 
