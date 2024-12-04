@@ -47,7 +47,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
             case "init":
                 let args = call.arguments as? String
                 guard let data = args?.data(using: .utf8) else {
-                    return result(throwKeyNotGeneratedError())
+                    return result(throwParamMissingError(param: args))
                 }
                 
                 let params = try self.decoder.decode(InitParams.self, from: data)
@@ -71,14 +71,18 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     try await singleFactorAuth?.initialize()
                     return result(nil)
                 } catch {
-                    result(throwKeyNotGeneratedError())
+                    result(FlutterError(
+                                code: (error as NSError).domain,
+                                message: error.localizedDescription,
+                                details: String(describing: error)
+                           ))
                 }
                 break
                 
             case "connect":
                 let args = call.arguments as? String
                 guard let data = args?.data(using: .utf8) else {
-                    return result(throwKeyNotGeneratedError())
+                    return result(throwParamMissingError(param: args))
                 }
 
                 let loginParams = try self.decoder.decode(LoginParams.self, from: data)
@@ -93,7 +97,11 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     let resultJson = String(decoding: resultData, as: UTF8.self)
                     return result(resultJson)
                 } catch {
-                    result(throwKeyNotGeneratedError())
+                    result(FlutterError(
+                                code: (error as NSError).domain,
+                                message: error.localizedDescription,
+                                details: String(describing: error)
+                            ))
                 }
                 break
 
@@ -114,7 +122,11 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     let resultJson = String(decoding: resultData, as: UTF8.self)
                     return result(resultJson)
                 } catch {
-                    result(throwKeyNotGeneratedError())
+                    result(FlutterError(
+                                 code: (error as NSError).domain,
+                                 message: error.localizedDescription,
+                                 details: String(describing: error)
+                           ))
                 }
                 break
 
@@ -124,13 +136,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    public func throwKeyNotGeneratedError() -> FlutterError {
-        return FlutterError(
-            code: "key_not_generated", message: "Key not generated", details: nil
-        )
-    }
-    
-    public func throwParamMissingError(param: String) -> FlutterError {
+    public func throwParamMissingError(param: String?) -> FlutterError {
         return FlutterError(
             code: "missing_param", message: param, details: nil
         )
