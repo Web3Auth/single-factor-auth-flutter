@@ -95,10 +95,10 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 try {
                     val initArgs = call.arguments<String>()
                     val loginParams = gson.fromJson(initArgs, LoginParams::class.java)
-                    val sfaKeyCF = singleFactorAuth.connect(loginParams, context)
+                    val sessionData = singleFactorAuth.connect(loginParams, context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#connect")
-                    val sfaKey = sfaKeyCF
-                    return prepareResult(sfaKey)
+                    val result: SessionData = sessionData
+                    return gson.toJson(result)
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
@@ -122,9 +122,8 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     )
                     singleFactorAuth.initialize(context).get()
                     var sessionData = singleFactorAuth.getSessionData()
-                    var response = sessionData?.let { prepareResult(it) }
-                        ?: gson.toJson(mapOf("error" to "Session data is not available"))
-                    return response
+                    val loginResult: SessionData? = sessionData
+                    return gson.toJson(loginResult)
                 } catch (e: Throwable) {
                     Log.e(
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",

@@ -30,33 +30,32 @@ class SingleFactorAuthFlutter {
     }
   }
 
-  Future<SFAKey> connect(LoginParams loginParams) async {
+  Future<SessionData> connect(LoginParams loginParams) async {
     try {
       Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
-      final String torusKeyJson = await _channel.invokeMethod(
+      final String sessionData = await _channel.invokeMethod(
         'connect',
         jsonEncode(loginParamsJson),
       );
-      return sfaKeyFromJson(torusKeyJson);
+      return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
   }
 
-  Future<SFAKey> getSessionData() async {
+  Future<SessionData> getSessionData() async {
     try {
-      final String torusKeyJson = await _channel.invokeMethod('getSessionData');
-      return sfaKeyFromJson(torusKeyJson);
+      final String sessionData = await _channel.invokeMethod('getSessionData');
+      return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
   }
 
-  Future<bool> logout() async {
+  Future<void> logout() async {
     try {
-      final bool result = await _channel.invokeMethod('logout');
-      return result;
+      await _channel.invokeMethod('logout');
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }

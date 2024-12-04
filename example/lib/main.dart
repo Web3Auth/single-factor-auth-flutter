@@ -51,11 +51,11 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> getSessionData() async {
     log("getSessionData() called");
-    final SFAKey sfaKey = await _singleFactorAuthFlutterPlugin.getSessionData();
-    if (sfaKey.error == null) {
+    final SessionData sessionData =
+        await _singleFactorAuthFlutterPlugin.getSessionData();
+    if (sessionData.publicAddress != null) {
       setState(() {
-        _result =
-            "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
+        _result = "Session Data: ${sessionData.toString()}";
       });
     }
   }
@@ -135,14 +135,13 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _getKey(Future<SFAKey> Function() method) {
+  VoidCallback _getKey(Future<SessionData> Function() method) {
     return () async {
       try {
-        final SFAKey response = await method();
+        final SessionData sessionData = await method();
         setState(() {
-          _result =
-              "Public Add : ${response.publicAddress} , Private Key : ${response.privateKey}";
-          log(response.publicAddress);
+          _result = "Session Data: ${sessionData.toString()}";
+          log("Full Session Data: ${sessionData.toString()}");
         });
       } on MissingParamException catch (error) {
         log("Missing Param: ${error.paramName}");
@@ -156,44 +155,47 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initialize() async {
     try {
-      final SFAKey sfaKey =
+      final SessionData sessionData =
           await _singleFactorAuthFlutterPlugin.getSessionData();
-      if (sfaKey.error == null) {
+
+      if (sessionData != null) {
         setState(() {
-          _result =
-              "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
+          _result = "Session Data: ${sessionData.toString()}";
         });
+      } else {
+        log("Session data is null");
       }
-    } on PrivateKeyNotGeneratedException {
-      log("Private key not generated");
     } on UnKnownException {
       log("Unknown exception occurred");
+    } catch (e, stackTrace) {
+      log("An unexpected error occurred: $e");
+      log("Stack trace: $stackTrace");
     }
   }
 
   //Get key example
-  Future<SFAKey> getKey() {
+  Future<SessionData> getKey() {
     return _singleFactorAuthFlutterPlugin.connect(LoginParams(
-        verifier: 'torus-test-health',
-        verifierId: 'hello@tor.us',
-        idToken: Utils().es256Token("hello@tor.us"),
+      verifier: 'torus-test-health',
+      verifierId: 'hello@tor.us',
+      idToken: Utils().es256Token("hello@tor.us"),
     ));
   }
 
   //Aggregate verifier key example
-  Future<SFAKey> getAggregateKey() {
+  Future<SessionData> getAggregateKey() {
     return _singleFactorAuthFlutterPlugin.connect(LoginParams(
         verifier: 'torus-aggregate-sapphire-mainnet',
         verifierId: 'devnettestuser@tor.us',
         idToken: Utils().es256Token("devnettestuser@tor.us"),
         subVerifierInfoArray: [
-          TorusSubVerifierInfo('torus-test-health', Utils().es256Token("devnettestuser@tor.us"))
-        ]
-    ));
+          TorusSubVerifierInfo(
+              'torus-test-health', Utils().es256Token("devnettestuser@tor.us"))
+        ]));
   }
 
   //Logout example
-  Future<bool> logout() {
+  Future<void> logout() {
     return _singleFactorAuthFlutterPlugin.logout();
   }
 }
