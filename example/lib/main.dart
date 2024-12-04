@@ -35,10 +35,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
       await init();
-      initialize();
+      getSessionData();
     } else if (Platform.isIOS) {
       await init();
-      initialize();
+      getSessionData();
     } else {}
   }
 
@@ -49,8 +49,8 @@ class _MyAppState extends State<MyApp> {
         sessionTime: 86400));
   }
 
-  Future<void> initialize() async {
-    log("initialize() called");
+  Future<void> getSessionData() async {
+    log("getSessionData() called");
     final SFAKey sfaKey = await _singleFactorAuthFlutterPlugin.getSessionData();
     if (sfaKey.error == null) {
       setState(() {
