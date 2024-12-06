@@ -133,6 +133,14 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     return gson.toJson(mapOf("error" to "Failed to retrieve session data"))
                 }
             }
+
+            "connected" -> {
+                try {
+                    return singleFactorAuth.isConnected()
+                } catch (e: Throwable) {
+                    throw Error(e)
+                }
+            }
         }
         throw NotImplementedError()
     }

@@ -51,9 +51,9 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> getSessionData() async {
     log("getSessionData() called");
-    final SessionData sessionData =
+    final SessionData? sessionData =
         await _singleFactorAuthFlutterPlugin.getSessionData();
-    if (sessionData.publicAddress != null) {
+    if (sessionData?.publicAddress != null) {
       setState(() {
         _result = "Session Data: ${sessionData.toString()}";
       });
@@ -155,7 +155,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initialize() async {
     try {
-      final SessionData sessionData =
+      final SessionData? sessionData =
           await _singleFactorAuthFlutterPlugin.getSessionData();
 
       setState(() {

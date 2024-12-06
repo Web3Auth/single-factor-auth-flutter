@@ -134,6 +134,19 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 }
                 break
 
+            case "connected":
+                do {
+                   let connected = try await singleFactorAuth?.connected() ?? false
+                   result(connected)
+                } catch {
+                    result(FlutterError(
+                                 code: (error as NSError).domain,
+                                 message: error.localizedDescription,
+                                 details: String(describing: error)
+                           ))
+                }
+                break
+
             default:
                 break
             }

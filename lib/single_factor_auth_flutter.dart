@@ -43,11 +43,11 @@ class SingleFactorAuthFlutter {
     }
   }
 
-  Future<SessionData> getSessionData() async {
+  Future<SessionData?> getSessionData() async {
     try {
       final String sessionData = await _channel.invokeMethod('getSessionData');
       if (sessionData == null || sessionData.isEmpty || sessionData == "null") {
-        throw Exception("Session data not found.");
+        return null;
       }
       return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
@@ -58,6 +58,14 @@ class SingleFactorAuthFlutter {
   Future<void> logout() async {
     try {
       await _channel.invokeMethod('logout');
+    } on PlatformException catch (e) {
+      throw _hanldePlatformException(e);
+    }
+  }
+
+  Future<bool> connected() async {
+    try {
+      return await _channel.invokeMethod('connected');
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
