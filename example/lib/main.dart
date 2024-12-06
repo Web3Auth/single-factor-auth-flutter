@@ -158,13 +158,9 @@ class _MyAppState extends State<MyApp> {
       final SessionData sessionData =
           await _singleFactorAuthFlutterPlugin.getSessionData();
 
-      if (sessionData != null) {
-        setState(() {
-          _result = "Session Data: ${sessionData.toString()}";
-        });
-      } else {
-        log("Session data is null");
-      }
+      setState(() {
+        _result = "Session Data: ${sessionData.toString()}";
+      });
     } on UnKnownException {
       log("Unknown exception occurred");
     } catch (e, stackTrace) {

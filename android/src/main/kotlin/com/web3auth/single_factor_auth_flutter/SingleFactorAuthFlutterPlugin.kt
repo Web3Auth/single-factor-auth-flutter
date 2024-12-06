@@ -136,18 +136,4 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
         }
         throw NotImplementedError()
     }
-
-    private fun prepareResult(sfaKey: SessionData): String {
-        val hashMap: HashMap<String, String> = HashMap(2)
-        hashMap["privateKey"] = sfaKey.privateKey ?: ""
-        hashMap["publicAddress"] = sfaKey.publicAddress ?: ""
-        return gson.toJson(hashMap)
-    }
-
-    private fun prepareResultFromSFAkey(sfaKey: SessionData): String {
-        val hashMap: HashMap<String, String> = HashMap(2)
-        hashMap["privateKey"] = sfaKey.privateKey
-        hashMap["publicAddress"] = sfaKey.publicAddress
-        return gson.toJson(hashMap)
-    }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/services.dart';
 import 'package:single_factor_auth_flutter/input.dart';
@@ -47,6 +46,9 @@ class SingleFactorAuthFlutter {
   Future<SessionData> getSessionData() async {
     try {
       final String sessionData = await _channel.invokeMethod('getSessionData');
+      if (sessionData == null || sessionData.isEmpty || sessionData == "null") {
+        throw Exception("Session data not found.");
+      }
       return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);

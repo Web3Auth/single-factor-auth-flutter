@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 class SessionData {
   final String privateKey;
