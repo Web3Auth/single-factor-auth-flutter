@@ -2,21 +2,40 @@ class LoginParams {
   final String verifier;
   final String verifierId;
   final String idToken;
-  final String? aggregateVerifier;
+  List<TorusSubVerifierInfo>? subVerifierInfoArray;
 
   LoginParams({
     required this.verifier,
     required this.verifierId,
     required this.idToken,
-    this.aggregateVerifier,
+    this.subVerifierInfoArray, //Optional
   });
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
+      'verifier': verifier,
+      'verifierId': verifierId,
+      'idToken': idToken,
+    };
+
+    if (subVerifierInfoArray != null) {
+      data['subVerifierInfoArray'] = subVerifierInfoArray!.map((v) => v.toJson()).toList();
+    }
+
+    return data;
+  }
+}
+
+class TorusSubVerifierInfo {
+  String verifier;
+  String idToken;
+
+  TorusSubVerifierInfo(this.verifier, this.idToken);
 
   Map<String, dynamic> toJson() {
     return {
       'verifier': verifier,
-      'verifierId': verifierId,
       'idToken': idToken,
-      'aggregateVerifier': aggregateVerifier,
     };
   }
 }
