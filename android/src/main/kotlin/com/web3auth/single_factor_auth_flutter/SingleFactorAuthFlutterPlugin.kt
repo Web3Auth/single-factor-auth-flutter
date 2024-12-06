@@ -108,7 +108,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 try {
                     val logoutCF = singleFactorAuth.logout(context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#logout")
-                    return logoutCF
+                    return null
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
