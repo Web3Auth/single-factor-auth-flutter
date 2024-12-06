@@ -123,7 +123,11 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     singleFactorAuth.initialize(context).get()
                     var sessionData = singleFactorAuth.getSessionData()
                     val loginResult: SessionData? = sessionData
-                    return gson.toJson(loginResult)
+                    return if (loginResult == null) {
+                        null
+                    } else {
+                        gson.toJson(loginResult)
+                    }
                 } catch (e: Throwable) {
                     Log.e(
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",

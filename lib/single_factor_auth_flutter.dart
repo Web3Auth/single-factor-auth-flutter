@@ -45,8 +45,8 @@ class SingleFactorAuthFlutter {
 
   Future<SessionData?> getSessionData() async {
     try {
-      final String sessionData = await _channel.invokeMethod('getSessionData');
-      if (sessionData == null || sessionData.isEmpty || sessionData == "null") {
+      final String? sessionData = await _channel.invokeMethod('getSessionData');
+      if (sessionData == null || sessionData.isEmpty) {
         return null;
       }
       return SessionData.fromJson(jsonDecode(sessionData));
