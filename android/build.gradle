@@ -48,8 +48,8 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-    implementation 'com.github.Web3Auth:single-factor-auth-android:3.0.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'com.github.grvgoel81:single-factor-auth-android:9.7.0'
     implementation 'org.torusresearch:fetch-node-details-java:5.0.0'
     implementation 'com.google.code.gson:gson:2.10.1'
 }

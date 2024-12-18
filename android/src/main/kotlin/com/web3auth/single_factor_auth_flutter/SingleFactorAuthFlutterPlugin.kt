@@ -4,7 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
 import com.web3auth.singlefactorauth.SingleFactorAuth
+import com.web3auth.singlefactorauth.types.ChainConfig
 import com.web3auth.singlefactorauth.types.LoginParams
 import com.web3auth.singlefactorauth.types.SessionData
 import com.web3auth.singlefactorauth.types.Web3AuthOptions
@@ -145,7 +149,81 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     throw Error(e)
                 }
             }
+
+            "showWalletUI" -> {
+                try {
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#showWalletUI")
+                    val wsArgs = call.arguments<String>() ?: return null
+                    val wsParams = gson.fromJson(wsArgs, WalletServicesJson::class.java)
+                    Log.d(wsParams.toString(), "#wsParams")
+                    val launchWalletCF = singleFactorAuth.showWalletUI(
+                        chainConfig = wsParams.chainConfig,
+                        path = wsParams.path
+                    )
+                    launchWalletCF.get()
+                    return null
+                } catch (e: NotImplementedError) {
+                    throw Error(e)
+                } catch (e: Throwable) {
+                    throw Error(e)
+                }
+            }
+
+            "request" -> {
+                try {
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#request")
+                    val requestArgs = call.arguments<String>() ?: return null
+                    val reqParams = gson.fromJson(requestArgs, RequestJson::class.java)
+                    Log.d(reqParams.toString(), "#reqParams")
+                    val requestCF = singleFactorAuth.request(
+                        chainConfig = reqParams.chainConfig,
+                        method = reqParams.method,
+                        requestParams = convertListToJsonArray(reqParams.requestParams),
+                        path = reqParams.path,
+                        appState = reqParams.appState
+                    )
+                    return gson.toJson(requestCF.get())
+                } catch (e: NotImplementedError) {
+                    throw Error(e)
+                } catch (e: Throwable) {
+                    throw Error(e)
+                }
+            }
+
+
         }
         throw NotImplementedError()
     }
+
+    private fun convertListToJsonArray(list: List<Any?>): JsonArray {
+        val jsonArray = JsonArray()
+        val gson = Gson()
+
+        list.forEach { item ->
+            val jsonElement: JsonElement = when (item) {
+                is Number -> JsonPrimitive(item)
+                is String -> JsonPrimitive(item)
+                is Boolean -> JsonPrimitive(item)
+                is Map<*, *> -> gson.toJsonTree(item)
+                is List<*> -> convertListToJsonArray(item)
+                null -> JsonPrimitive("")
+                else -> throw IllegalArgumentException("Unsupported type: ${item::class.java}")
+            }
+            jsonArray.add(jsonElement)
+        }
+        return jsonArray
+    }
 }
+
+data class WalletServicesJson(
+    val chainConfig: ChainConfig,
+    val path: String? = "wallet"
+)
+
+data class RequestJson(
+    val chainConfig: ChainConfig,
+    val method: String,
+    val requestParams: List<Any?>,
+    val path: String? = "wallet/request",
+    val appState: String? = null
+)
