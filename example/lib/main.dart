@@ -21,7 +21,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _singleFactorAuthFlutterPlugin = SingleFactAuthFlutter();
+  final _singleFactorAuthFlutterPlugin = SingleFactorAuthFlutter();
   String _result = '';
   bool logoutVisible = false;
   Web3AuthNetwork web3AuthNetwork = Web3AuthNetwork.sapphire_mainnet;
@@ -35,14 +35,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> initSdk() async {
     if (Platform.isAndroid) {
       await init();
-      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
-        initialize();
-      }
+      getSessionData();
     } else if (Platform.isIOS) {
       await init();
-      if (await _singleFactorAuthFlutterPlugin.isSessionIdExists()) {
-        initialize();
-      }
+      getSessionData();
     } else {}
   }
 
@@ -53,13 +49,13 @@ class _MyAppState extends State<MyApp> {
         sessionTime: 86400));
   }
 
-  Future<void> initialize() async {
-    log("initialize() called");
-    final SFAKey? sfaKey = await _singleFactorAuthFlutterPlugin.initialize();
-    if (sfaKey != null) {
+  Future<void> getSessionData() async {
+    log("getSessionData() called");
+    final SessionData? sessionData =
+        await _singleFactorAuthFlutterPlugin.getSessionData();
+    if (sessionData?.publicAddress != null) {
       setState(() {
-        _result =
-            "Public Add : ${sfaKey.publicAddress} , Private Key : ${sfaKey.privateKey}";
+        _result = "Session Data: ${sessionData.toString()}";
       });
     }
   }
@@ -139,14 +135,13 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  VoidCallback _getKey(Future<SFAKey> Function() method) {
+  VoidCallback _getKey(Future<SessionData> Function() method) {
     return () async {
       try {
-        final SFAKey response = await method();
+        final SessionData sessionData = await method();
         setState(() {
-          _result =
-              "Public Add : ${response.publicAddress} , Private Key : ${response.privateKey}";
-          log(response.publicAddress);
+          _result = "Session Data: ${sessionData.toString()}";
+          log("Full Session Data: ${sessionData.toString()}");
         });
       } on MissingParamException catch (error) {
         log("Missing Param: ${error.paramName}");
@@ -160,25 +155,43 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initialize() async {
     try {
-      final SFAKey? response =
-          await _singleFactorAuthFlutterPlugin.initialize();
+      final SessionData? sessionData =
+          await _singleFactorAuthFlutterPlugin.getSessionData();
+
       setState(() {
-        _result =
-            "Public Add : ${response?.publicAddress} , Private Key : ${response?.privateKey}";
-        log(response!.publicAddress);
+        _result = "Session Data: ${sessionData.toString()}";
       });
-    } on PrivateKeyNotGeneratedException {
-      log("Private key not generated");
     } on UnKnownException {
       log("Unknown exception occurred");
+    } catch (e, stackTrace) {
+      log("An unexpected error occurred: $e");
+      log("Stack trace: $stackTrace");
     }
   }
 
-  Future<SFAKey> getKey() {
+  //Get key example
+  Future<SessionData> getKey() {
     return _singleFactorAuthFlutterPlugin.connect(LoginParams(
-        verifier: 'torus-test-health',
-        verifierId: 'hello@tor.us',
-        idToken: Utils().es256Token("hello@tor.us"),
+      verifier: 'torus-test-health',
+      verifierId: 'hello@tor.us',
+      idToken: Utils().es256Token("hello@tor.us"),
     ));
+  }
+
+  //Aggregate verifier key example
+  Future<SessionData> getAggregateKey() {
+    return _singleFactorAuthFlutterPlugin.connect(LoginParams(
+        verifier: 'torus-aggregate-sapphire-mainnet',
+        verifierId: 'devnettestuser@tor.us',
+        idToken: Utils().es256Token("devnettestuser@tor.us"),
+        subVerifierInfoArray: [
+          TorusSubVerifierInfo(
+              'torus-test-health', Utils().es256Token("devnettestuser@tor.us"))
+        ]));
+  }
+
+  //Logout example
+  Future<void> logout() {
+    return _singleFactorAuthFlutterPlugin.logout();
   }
 }

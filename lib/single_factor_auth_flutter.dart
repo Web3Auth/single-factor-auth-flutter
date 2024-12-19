@@ -7,7 +7,7 @@ import 'package:single_factor_auth_flutter/output.dart';
 
 import 'single_factor_auth_flutter_platform_interface.dart';
 
-class SingleFactAuthFlutter {
+class SingleFactorAuthFlutter {
   static const MethodChannel _channel =
       MethodChannel('single_factor_auth_flutter');
 
@@ -21,45 +21,111 @@ class SingleFactAuthFlutter {
     await _channel.invokeMethod('init', jsonEncode(initParamsJson));
   }
 
-  Future<SFAKey?> initialize() async {
+  Future<void> initialize() async {
     try {
-      final String? sfaKeyJson = await _channel.invokeMethod(
-        'initialize',
-      );
-
-      if (sfaKeyJson != null) {
-        return sfaKeyFromJson(sfaKeyJson);
-      }
-      return null;
+      await _channel.invokeMethod('initialize');
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
-  Future<SFAKey> connect(LoginParams loginParams) async {
+  Future<SessionData> connect(LoginParams loginParams) async {
     try {
       Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
-      final String torusKeyJson = await _channel.invokeMethod(
+      final String sessionData = await _channel.invokeMethod(
         'connect',
-        jsonEncode(loginParams),
+        jsonEncode(loginParamsJson),
       );
-      return sfaKeyFromJson(torusKeyJson);
+      return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
-  Future<bool> isSessionIdExists() async {
+  Future<SessionData?> getSessionData() async {
     try {
-      bool response = await _channel.invokeMethod('isSessionIdExists');
-      return response;
+      final String? sessionData = await _channel.invokeMethod('getSessionData');
+      if (sessionData == null || sessionData.isEmpty) {
+        return null;
+      }
+      return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
-  Exception _hanldePlatformException(PlatformException e) {
+  Future<void> logout() async {
+    try {
+      await _channel.invokeMethod('logout');
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
+  Future<bool> connected() async {
+    try {
+      return await _channel.invokeMethod('connected');
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
+  Future<void> launchWalletServices(
+    ChainConfig chainConfig, {
+    String path = "wallet",
+  }) async {
+    try {
+      Map<String, dynamic> chainConfigJson = chainConfig.toJson();
+      chainConfigJson.removeWhere((key, value) => value == null);
+
+      Map<String, dynamic> walletServicesJson = {};
+      walletServicesJson["chainConfig"] = chainConfigJson;
+      walletServicesJson["path"] = path;
+
+      await _channel.invokeMethod(
+        'launchWalletServices',
+        jsonEncode(walletServicesJson),
+      );
+
+      return;
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
+  Future<SignResponse> request(
+    ChainConfig chainConfig,
+    String method,
+    List<dynamic> requestParams, {
+    String path = "wallet/request",
+    String? appState,
+  }) async {
+    try {
+      Map<String, dynamic> chainConfigJson = chainConfig.toJson();
+      chainConfigJson.removeWhere((key, value) => value == null);
+
+      List<String> modifiedRequestParams =
+          requestParams.map((param) => jsonEncode(param)).toList();
+
+      Map<String, dynamic> requestJson = {};
+      requestJson["chainConfig"] = chainConfigJson;
+      requestJson["method"] = method;
+      requestJson["requestParams"] = modifiedRequestParams;
+      requestJson["path"] = path;
+      if (appState != null) {
+        requestJson["appState"] = appState;
+      }
+
+      final response =
+          await _channel.invokeMethod('request', jsonEncode(requestJson));
+      return SignResponse.fromJson(jsonDecode(response));
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
+  Exception _handlePlatformException(PlatformException e) {
     switch (e.code) {
       case "UserCancelledException":
         throw UserCancelledException();
