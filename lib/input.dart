@@ -1,3 +1,7 @@
+import 'dart:collection';
+
+import 'enums.dart';
+
 class LoginParams {
   final String verifier;
   final String verifierId;
@@ -40,33 +44,111 @@ class TorusSubVerifierInfo {
   }
 }
 
-class SFAParams {
+class Web3AuthOptions {
   final Web3AuthNetwork network;
   final String clientId;
   final int sessionTime;
+  WhiteLabelData? whiteLabel;
+  Map<String, String>? originData;
+  BuildEnv buildEnv;
+  Uri redirectUrl;
+  String? walletSdkUrl;
 
-  SFAParams(
-      {required this.network,
-      required this.clientId,
-      this.sessionTime = 86400});
+  Web3AuthOptions({
+    required this.network,
+    required this.clientId,
+    this.sessionTime = 86400,
+    this.whiteLabel,
+    this.originData,
+    BuildEnv? buildEnv,
+    required this.redirectUrl,
+    String? walletSdkUrl,
+  })  : buildEnv = buildEnv ?? BuildEnv.production,
+        walletSdkUrl =
+            walletSdkUrl ?? getWalletSdkUrl(buildEnv ?? BuildEnv.production);
 
   Map<String, dynamic> toJson() {
     return {
       'network': network.name,
       'clientId': clientId,
       'sessionTime': sessionTime,
+      'whiteLabel': whiteLabel?.toJson(),
+      "originData": originData,
+      'buildEnv': buildEnv.name,
+      'redirectUrl': redirectUrl.toString(),
+      'walletSdkUrl': walletSdkUrl,
     };
   }
 }
 
-enum Web3AuthNetwork {
-  mainnet,
-  testnet,
-  cyan,
-  aqua,
-  celeste,
-  sapphire_devnet,
-  sapphire_mainnet
+String getWalletSdkUrl(BuildEnv? buildEnv) {
+  const String walletServicesVersion = "v3";
+  switch (buildEnv) {
+    case BuildEnv.staging:
+      return "https://staging-wallet.web3auth.io/$walletServicesVersion";
+    case BuildEnv.testing:
+      return "https://develop-wallet.web3auth.io";
+    case BuildEnv.production:
+    default:
+      return "https://wallet.web3auth.io/$walletServicesVersion";
+  }
+}
+
+class WhiteLabelData {
+  /// Display name for the app in the UI.
+  final String? appName;
+
+  /// App logo to be used in dark mode.
+  final String? logoLight;
+
+  /// App logo to be used in light mode.
+  final String? logoDark;
+
+  /// Language which will be used by Web3Auth, app will use browser language if not specified.
+  ///
+  /// Default language is [Language.en]. Checkout [Language] for supported languages.
+  final Language? defaultLanguage;
+
+  /// Theme mode for the login modal
+  ///
+  /// Default value is [ThemeModes.auto].
+  final ThemeModes? mode;
+
+  /// Used to customize the theme of the login modal.
+  final HashMap? theme;
+
+  /// Url to be used in the Modal
+  final String? appUrl;
+
+  /// Use logo loader.
+  ///
+  /// If [logoDark] and [logoLight] are null, the default Web3Auth logo
+  /// will be used for the loader.
+  final bool? useLogoLoader;
+
+  WhiteLabelData({
+    this.appName,
+    this.logoLight,
+    this.logoDark,
+    this.defaultLanguage = Language.en,
+    this.mode = ThemeModes.auto,
+    this.theme,
+    this.appUrl,
+    this.useLogoLoader = false,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'appName': appName,
+      'logoLight': logoLight,
+      'logoDark': logoDark,
+      'defaultLanguage': defaultLanguage?.name,
+      'mode': mode?.name,
+      'theme': theme,
+      'appUrl': appUrl,
+      'useLogoLoader': useLogoLoader
+    };
+  }
 }
 
 class ChainConfig {
@@ -148,11 +230,3 @@ class UnKnownException implements Exception {
 
   UnKnownException(this.message);
 }
-
-enum BuildEnv { production, staging, testing }
-
-enum ChainNamespace { eip155, solana }
-
-enum Language { en, de, ja, ko, zh, es, fr, pt, nl, tr }
-
-enum ThemeModes { light, dark, auto }

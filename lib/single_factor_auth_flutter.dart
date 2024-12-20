@@ -15,8 +15,8 @@ class SingleFactorAuthFlutter {
     return SingleFactAuthFlutterPlatform.instance.getPlatformVersion();
   }
 
-  Future<void> init(SFAParams initParams) async {
-    Map<String, dynamic> initParamsJson = initParams.toJson();
+  Future<void> init(Web3AuthOptions web3AuthOptions) async {
+    Map<String, dynamic> initParamsJson = web3AuthOptions.toJson();
     initParamsJson.removeWhere((key, value) => value == null);
     await _channel.invokeMethod('init', jsonEncode(initParamsJson));
   }
