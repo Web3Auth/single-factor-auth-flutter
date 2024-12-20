@@ -71,7 +71,7 @@ class SingleFactorAuthFlutter {
     }
   }
 
-  Future<void> launchWalletServices(
+  Future<void> showWalletUI(
     ChainConfig chainConfig, {
     String path = "wallet",
   }) async {
@@ -84,7 +84,7 @@ class SingleFactorAuthFlutter {
       walletServicesJson["path"] = path;
 
       await _channel.invokeMethod(
-        'launchWalletServices',
+        'showWalletUI',
         jsonEncode(walletServicesJson),
       );
 
