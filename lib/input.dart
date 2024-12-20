@@ -1,3 +1,5 @@
+import 'enums.dart';
+
 class LoginParams {
   final String verifier;
   final String verifierId;
@@ -40,12 +42,12 @@ class TorusSubVerifierInfo {
   }
 }
 
-class SFAParams {
+class Web3AuthOptions {
   final Web3AuthNetwork network;
   final String clientId;
   final int sessionTime;
 
-  SFAParams(
+  Web3AuthOptions(
       {required this.network,
       required this.clientId,
       this.sessionTime = 86400});
@@ -57,16 +59,6 @@ class SFAParams {
       'sessionTime': sessionTime,
     };
   }
-}
-
-enum Web3AuthNetwork {
-  mainnet,
-  testnet,
-  cyan,
-  aqua,
-  celeste,
-  sapphire_devnet,
-  sapphire_mainnet
 }
 
 class UserCancelledException implements Exception {}

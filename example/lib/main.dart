@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:single_factor_auth_flutter/enums.dart';
 import 'package:single_factor_auth_flutter/input.dart';
 import 'package:single_factor_auth_flutter/output.dart';
 import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
@@ -43,7 +44,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> init() async {
-    await _singleFactorAuthFlutterPlugin.init(SFAParams(
+    await _singleFactorAuthFlutterPlugin.init(Web3AuthOptions(
         network: web3AuthNetwork,
         clientId: 'YOUR_CLIENT_ID',
         sessionTime: 86400));
