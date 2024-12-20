@@ -7,7 +7,7 @@ import 'package:single_factor_auth_flutter/output.dart';
 
 import 'single_factor_auth_flutter_platform_interface.dart';
 
-class SingleFactAuthFlutter {
+class SingleFactorAuthFlutter {
   static const MethodChannel _channel =
       MethodChannel('single_factor_auth_flutter');
 
@@ -15,45 +15,57 @@ class SingleFactAuthFlutter {
     return SingleFactAuthFlutterPlatform.instance.getPlatformVersion();
   }
 
-  Future<void> init(SFAParams initParams) async {
-    Map<String, dynamic> initParamsJson = initParams.toJson();
+  Future<void> init(Web3AuthOptions web3AuthOptions) async {
+    Map<String, dynamic> initParamsJson = web3AuthOptions.toJson();
     initParamsJson.removeWhere((key, value) => value == null);
     await _channel.invokeMethod('init', jsonEncode(initParamsJson));
   }
 
-  Future<SFAKey?> initialize() async {
+  Future<void> initialize() async {
     try {
-      final String? sfaKeyJson = await _channel.invokeMethod(
-        'initialize',
-      );
-
-      if (sfaKeyJson != null) {
-        return sfaKeyFromJson(sfaKeyJson);
-      }
-      return null;
+      await _channel.invokeMethod('initialize');
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
   }
 
-  Future<SFAKey> connect(LoginParams loginParams) async {
+  Future<SessionData> connect(LoginParams loginParams) async {
     try {
       Map<String, dynamic> loginParamsJson = loginParams.toJson();
       loginParamsJson.removeWhere((key, value) => value == null);
-      final String torusKeyJson = await _channel.invokeMethod(
+      final String sessionData = await _channel.invokeMethod(
         'connect',
-        jsonEncode(loginParams),
+        jsonEncode(loginParamsJson),
       );
-      return sfaKeyFromJson(torusKeyJson);
+      return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
   }
 
-  Future<bool> isSessionIdExists() async {
+  Future<SessionData?> getSessionData() async {
     try {
-      bool response = await _channel.invokeMethod('isSessionIdExists');
-      return response;
+      final String? sessionData = await _channel.invokeMethod('getSessionData');
+      if (sessionData == null || sessionData.isEmpty) {
+        return null;
+      }
+      return SessionData.fromJson(jsonDecode(sessionData));
+    } on PlatformException catch (e) {
+      throw _hanldePlatformException(e);
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _channel.invokeMethod('logout');
+    } on PlatformException catch (e) {
+      throw _hanldePlatformException(e);
+    }
+  }
+
+  Future<bool> connected() async {
+    try {
+      return await _channel.invokeMethod('connected');
     } on PlatformException catch (e) {
       throw _hanldePlatformException(e);
     }
