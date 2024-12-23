@@ -51,7 +51,7 @@ class Web3AuthOptions {
   WhiteLabelData? whiteLabel;
   Map<String, String>? originData;
   BuildEnv buildEnv;
-  Uri redirectUrl;
+  String redirectUrl;
   String? walletSdkUrl;
 
   Web3AuthOptions({

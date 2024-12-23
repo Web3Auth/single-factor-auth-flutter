@@ -1,6 +1,7 @@
 package com.web3auth.single_factor_auth_flutter
 
 import android.app.Activity
+import android.net.Uri
 import android.util.Log
 import androidx.annotation.NonNull
 import com.google.gson.Gson
@@ -83,7 +84,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
                 web3AuthOptions =
                     Web3AuthOptions(
                         params.clientId, getNetwork(params.network), params.sessionTime,
-                        redirectUrl = params.redirectUrl
+                        redirectUrl = Uri.parse(params.redirectUrl)
                     )
                 singleFactorAuth = SingleFactorAuth(web3AuthOptions, activity!!)
                 return null
