@@ -139,7 +139,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
                         "Error retrieving session data",
                         e
                     )
-                    return gson.toJson(mapOf("error" to "Failed to retrieve session data"))
+                    return null
                 }
             }
 
