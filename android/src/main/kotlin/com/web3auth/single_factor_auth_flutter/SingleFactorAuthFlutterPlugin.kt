@@ -81,7 +81,10 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
                 val initArgs = call.arguments<String>()
                 val params = gson.fromJson(initArgs, SFAOptions::class.java)
                 web3AuthOptions =
-                    Web3AuthOptions(params.clientId, getNetwork(params.network), params.sessionTime)
+                    Web3AuthOptions(
+                        params.clientId, getNetwork(params.network), params.sessionTime,
+                        redirectUrl = params.redirectUrl
+                    )
                 singleFactorAuth = SingleFactorAuth(web3AuthOptions, activity!!)
                 return null
             }
