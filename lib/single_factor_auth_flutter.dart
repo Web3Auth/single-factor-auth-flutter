@@ -76,7 +76,6 @@ class SingleFactorAuthFlutter {
     String path = "wallet",
   }) async {
     try {
-      print("object");
       Map<String, dynamic> chainConfigJson = chainConfig.toJson();
       chainConfigJson.removeWhere((key, value) => value == null);
 
