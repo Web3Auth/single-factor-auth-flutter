@@ -147,6 +147,63 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 }
                 break
 
+            case "showWalletUI":
+                let wsParams: WalletServicesParams
+                do {
+                    wsParams = try decoder.decode(WalletServicesParams.self, from: data)
+                    print("chainConfig: \(wsParams.chainConfig)")
+                } catch {
+                    result(FlutterError(
+                        code: "INVALID_ARGUMENTS",
+                        message: "Invalid Wallet Services Params",
+                        details: nil))
+                        return
+                }
+
+                do {
+                    try await singleFactorAuth?.showWalletUI(chainConfig: wsParams.chainConfig, path: wsParams.path)
+                    result(nil)
+                    return
+                } catch {
+                     result(FlutterError(
+                         code: "WalletServicesFailedFailedException",
+                         message: "Web3Auth wallet services launch failed",
+                         details: error.localizedDescription))
+                     return
+                }
+
+            case "request":
+                let reqParams: RequestJson
+                    do {
+                        reqParams = try decoder.decode(RequestJson.self, from: data)
+                        } catch {
+                        result(FlutterError(
+                            code: "INVALID_ARGUMENTS",
+                            message: "Invalid request Params",
+                            details: error.localizedDescription))
+                            return
+                        }
+
+                    do {
+                        let signResponse = try await singleFactorAuth?.request(
+                            chainConfig: reqParams.chainConfig,
+                            method: reqParams.method,
+                            requestParams: reqParams.requestParams,
+                            path: reqParams.path,
+                            appState: reqParams.appState
+                        )
+                        let signData = try encoder.encode(signResponse)
+                        let resultMap = String(decoding: signData, as: UTF8.self)
+                        result(resultMap)
+                        return
+                    } catch {
+                        result(FlutterError(
+                            code: "RequestFailedFailedException",
+                            message: "Web3Auth request launch failed",
+                            details: error.localizedDescription))
+                        return
+                    }
+
             default:
                 break
             }
@@ -172,4 +229,17 @@ struct getTorusKeyParams: Codable {
     var verifierId: String
     var idToken: String
     var aggregateVerifier: String?
+}
+
+struct WalletServicesParams: Codable {
+    let chainConfig: ChainConfig
+    let path: String?
+}
+
+struct RequestJson: Codable {
+    let chainConfig: ChainConfig
+    let method: String
+    let requestParams: [String]
+    let path: String?
+    let appState: String?
 }
