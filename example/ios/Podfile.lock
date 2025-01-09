@@ -6,17 +6,17 @@ PODS:
   - KeychainSwift (20.0.0)
   - single_factor_auth_flutter (0.0.1):
     - Flutter
-    - SingleFactorAuth (= 9.0.3)
-  - SingleFactorAuth (9.0.3):
+    - SingleFactorAuth (= 9.0.4)
+  - SingleFactorAuth (9.0.4):
     - JWTDecode (~> 3.2)
     - Torus-utils (~> 10.0.0)
-    - TorusSessionManager (~> 6.0.1)
+    - TorusSessionManager (~> 6.0.2)
   - Torus-fetchNodeDetails (8.0.0):
     - BigInt (~> 5.2.0)
   - Torus-utils (10.0.0):
     - curvelib.swift (~> 2.0.0)
     - Torus-fetchNodeDetails (~> 8.0.0)
-  - TorusSessionManager (6.0.1):
+  - TorusSessionManager (6.0.2):
     - curvelib.swift (~> 2.0.0)
     - KeychainSwift (~> 20.0.0)
 
@@ -47,11 +47,11 @@ SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   JWTDecode: 7dae24cb9bf9b608eae61e5081029ec169bb5527
   KeychainSwift: 0ce6a4d13f7228054d1a71bb1b500448fb2ab837
-  single_factor_auth_flutter: 0d99b60b1e56e4c8a36754519a15a142e97db518
-  SingleFactorAuth: 5f7af5e3370769455f7543453cbf398da1ffb754
+  single_factor_auth_flutter: aab0e8cb32b6e76fe5cb8a2036489367bc549338
+  SingleFactorAuth: 6a2639e2d25d4cec901753193b97f8503734734d
   Torus-fetchNodeDetails: 2a5fbb222ec28af4128d64e4c2d520c7db456b78
   Torus-utils: 4a1db3d9c1aa221df312ffa7ec154e7e4719850a
-  TorusSessionManager: 9c9871718233dc020ab4fde9bdf37802f01dae10
+  TorusSessionManager: 3c47c2a4c4d6173a10006eb0af4b86317ee45ff8
 
 PODFILE CHECKSUM: d5c402b2f74646de5c7f24c1231886362b49b38f
 
