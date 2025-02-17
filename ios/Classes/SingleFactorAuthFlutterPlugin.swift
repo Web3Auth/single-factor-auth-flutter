@@ -148,6 +148,10 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 break
 
             case "showWalletUI":
+                let args = call.arguments as? String
+                guard let data = args?.data(using: .utf8) else {
+                    return result(throwParamMissingError(param: args))
+                }
                 let wsParams: WalletServicesParams
                 do {
                     wsParams = try decoder.decode(WalletServicesParams.self, from: data)
@@ -173,6 +177,10 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 }
 
             case "request":
+                let args = call.arguments as? String
+                guard let data = args?.data(using: .utf8) else {
+                    return result(throwParamMissingError(param: args))
+                }
                 let reqParams: RequestJson
                     do {
                         reqParams = try decoder.decode(RequestJson.self, from: data)
@@ -198,7 +206,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                         return
                     } catch {
                         result(FlutterError(
-                            code: "RequestFailedFailedException",
+                            code: "RequestMethodFailedException",
                             message: "Web3Auth request launch failed",
                             details: error.localizedDescription))
                         return
