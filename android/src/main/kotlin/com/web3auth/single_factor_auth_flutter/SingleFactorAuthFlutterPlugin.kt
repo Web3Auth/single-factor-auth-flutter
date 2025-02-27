@@ -6,9 +6,8 @@ import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.web3auth.singlefactorauth.SingleFactorAuth
 import com.web3auth.singlefactorauth.types.LoginParams
-import com.web3auth.singlefactorauth.types.SFAKey
-import com.web3auth.singlefactorauth.types.SFAParams
-import com.web3auth.singlefactorauth.types.TorusSubVerifierInfo
+import com.web3auth.singlefactorauth.types.SessionData
+import com.web3auth.singlefactorauth.types.Web3AuthOptions
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -27,7 +26,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var context: Context
     private lateinit var singleFactorAuth: SingleFactorAuth
-    private lateinit var sfaParams: SFAParams
+    private lateinit var web3AuthOptions: Web3AuthOptions
     private lateinit var loginParams: LoginParams
     private var gson: Gson = Gson()
 
@@ -76,9 +75,9 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "init" -> {
                 val initArgs = call.arguments<String>()
                 val params = gson.fromJson(initArgs, SFAOptions::class.java)
-                sfaParams =
-                    SFAParams(getNetwork(params.network), params.clientId, params.sessionTime)
-                singleFactorAuth = SingleFactorAuth(sfaParams, context)
+                web3AuthOptions =
+                    Web3AuthOptions(params.clientId, getNetwork(params.network), params.sessionTime)
+                singleFactorAuth = SingleFactorAuth(web3AuthOptions, context)
                 return null
             }
 
@@ -86,11 +85,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 try {
                     val sfaKey = singleFactorAuth.initialize(context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
-                    return if (sfaKey.get() != null) {
-                        prepareResultFromSFAkey(sfaKey.get())
-                    } else {
-                        ""
-                    }
+                    return null
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
@@ -99,60 +94,58 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "connect" -> {
                 try {
                     val initArgs = call.arguments<String>()
-                    val params = gson.fromJson(initArgs, Web3AuthOptions::class.java)
-                    if (params.aggregateVerifier.isNullOrEmpty()) {
-                        loginParams = LoginParams(
-                            params.verifier, params.verifierId,
-                            params.idToken
-                        )
-                    } else {
-                        loginParams = LoginParams(
-                            params.aggregateVerifier, params.verifierId,
-                            params.idToken,
-                            arrayOf(
-                                TorusSubVerifierInfo(
-                                    params.verifier,
-                                    params.idToken
-                                )
-                            )
-                        )
-                    }
-                    val sfaKeyCF = singleFactorAuth.connect(loginParams, context)
+                    val loginParams = gson.fromJson(initArgs, LoginParams::class.java)
+                    val sessionData = singleFactorAuth.connect(loginParams, context)
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#connect")
-                    val sfaKey = sfaKeyCF
-                    return prepareResult(sfaKey)
+                    val result: SessionData = sessionData
+                    return gson.toJson(result)
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
             }
 
-            "isSessionIdExists" -> {
+            "logout" -> {
                 try {
-                    val result = singleFactorAuth.isSessionIdExists()
+                    val logoutCF = singleFactorAuth.logout(context)
+                    Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#logout")
+                    return null
+                } catch (e: Throwable) {
+                    throw Error(e)
+                }
+            }
+
+            "getSessionData" -> {
+                try {
                     Log.d(
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
-                        "#isSessionIdExists"
+                        "#getSessionData"
                     )
-                    return result
+                    singleFactorAuth.initialize(context).get()
+                    var sessionData = singleFactorAuth.getSessionData()
+                    val loginResult: SessionData? = sessionData
+                    return if (loginResult == null) {
+                        null
+                    } else {
+                        gson.toJson(loginResult)
+                    }
+                } catch (e: Throwable) {
+                    Log.e(
+                        "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
+                        "Error retrieving session data",
+                        e
+                    )
+                    return gson.toJson(mapOf("error" to "Failed to retrieve session data"))
+                }
+            }
+
+            "connected" -> {
+                try {
+                    return singleFactorAuth.isConnected()
                 } catch (e: Throwable) {
                     throw Error(e)
                 }
             }
         }
         throw NotImplementedError()
-    }
-
-    private fun prepareResult(sfaKey: SFAKey?): String {
-        val hashMap: HashMap<String, String> = HashMap<String, String>(2)
-        hashMap["privateKey"] = sfaKey?.getPrivateKey() as String
-        hashMap["publicAddress"] = sfaKey?.getPublicAddress() as String
-        return gson.toJson(hashMap)
-    }
-
-    private fun prepareResultFromSFAkey(sfaKey: SFAKey): String {
-        val hashMap: HashMap<String, String> = HashMap<String, String>(2)
-        hashMap["privateKey"] = sfaKey.getPrivateKey() as String ?: ""
-        hashMap["publicAddress"] = sfaKey.getPublicAddress() as String ?: ""
-        return gson.toJson(hashMap)
     }
 }

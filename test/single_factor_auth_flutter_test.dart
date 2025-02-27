@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
 import 'package:single_factor_auth_flutter/single_factor_auth_flutter_platform_interface.dart';
 import 'package:single_factor_auth_flutter/single_factor_auth_flutter_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';

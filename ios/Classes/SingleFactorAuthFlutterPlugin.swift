@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import FetchNodeDetails
 import SingleFactorAuth
 
 public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
@@ -16,25 +17,25 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
     private func getNetwork(_ network: String) -> Web3AuthNetwork {
         switch network {
         case "mainnet":
-            return .legacy(.MAINNET)
+            return .MAINNET
         case "testnet":
-            return .legacy(.TESTNET)
+            return .TESTNET
         case "aqua":
-            return .legacy(.AQUA)
+            return .AQUA
         case "cyan":
-            return .legacy(.CYAN)
+            return .CYAN
         case "sapphire_devnet":
-            return .sapphire(.SAPPHIRE_DEVNET)
+            return .SAPPHIRE_DEVNET
         case "sapphire_mainnet":
-            return .sapphire(.SAPPHIRE_MAINNET)
+            return .SAPPHIRE_MAINNET
         default:
-            return .sapphire(.SAPPHIRE_MAINNET)
+            return .SAPPHIRE_MAINNET
         }
     }
     
     var decoder = JSONDecoder()
     var encoder = JSONEncoder()
-    var sfaParams: SFAParams?
+    var web3AuthOptions: Web3AuthOptions?
     var singleFactorAuth: SingleFactorAuth?
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -51,28 +52,24 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
                 let params = try self.decoder.decode(InitParams.self, from: data)
                 
-                sfaParams = SFAParams(
-                    web3AuthClientId: params.clientId,
-                    network: self.getNetwork(params.network),
+                web3AuthOptions = Web3AuthOptions(
+                    clientId: params.clientId,
+                    web3AuthNetwork: self.getNetwork(params.network),
                     sessionTime: params.sessionTime ?? 86400
                 )
                 
                 let singleFactorAuth =  try SingleFactorAuth(
-                    params: sfaParams!
+                    params: web3AuthOptions!
                 )
                 
                 self.singleFactorAuth = singleFactorAuth
                 return result(nil)
+                break
                 
             case "initialize":
                 do {
-                    guard let torusKeyCF = try await singleFactorAuth?.initialize() else {
-                        return result(nil)
-                    }
-                    
-                    let resultData: Data = try encoder.encode(torusKeyCF)
-                    let resultJson = String(decoding: resultData, as: UTF8.self)
-                    return result(resultJson)
+                    try await singleFactorAuth?.initialize()
+                    return result(nil)
                 } catch {
                     result(FlutterError(
                                 code: (error as NSError).domain,
@@ -80,6 +77,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                                 details: String(describing: error)
                            ))
                 }
+                break
                 
             case "connect":
                 let args = call.arguments as? String
@@ -87,28 +85,7 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                     return result(throwParamMissingError(param: args))
                 }
 
-                let params = try self.decoder.decode(getTorusKeyParams.self, from: data)
-
-                let loginParams: LoginParams
-                if params.aggregateVerifier?.isEmpty ?? true {
-                    loginParams = LoginParams(
-                        verifier: params.verifier,
-                        verifierId: params.verifierId,
-                        idToken: params.idToken
-                    )
-                } else {
-                    loginParams = LoginParams(
-                        verifier: params.aggregateVerifier!,
-                        verifierId: params.verifierId,
-                        idToken: params.idToken,
-                        subVerifierInfoArray: [
-                            TorusSubVerifierInfo(
-                                verifier: params.verifier,
-                                idToken: params.idToken
-                            )
-                        ]
-                    )
-                }
+                let loginParams = try self.decoder.decode(LoginParams.self, from: data)
                 
                 do {
                   
@@ -128,14 +105,39 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 }
                 break
 
-            case "isSessionIdExists":
+            case "logout":
                 do {
-                    if singleFactorAuth == nil {
-                        return result(false)
-                    } else {
-                        let isSessionExists = try await singleFactorAuth?.isSessionIdExists() ?? false
-                        return result(isSessionExists)
-                    }
+                    try await singleFactorAuth?.logout()
+                    return result(nil)
+                } catch {
+                    result(FlutterError(
+                                 code: (error as NSError).domain,
+                                 message: error.localizedDescription,
+                                 details: String(describing: error)
+                           ))
+                }
+                break
+
+            case "getSessionData":
+                do {
+                    try await singleFactorAuth?.initialize()
+                    let sessionData = try await singleFactorAuth?.getSessionData()
+                    let resultData = try encoder.encode(sessionData)
+                    let resultJson = String(decoding: resultData, as: UTF8.self)
+                    return result(resultJson)
+                } catch {
+                    result(FlutterError(
+                                 code: (error as NSError).domain,
+                                 message: error.localizedDescription,
+                                 details: String(describing: error)
+                           ))
+                }
+                break
+
+            case "connected":
+                do {
+                   let connected = try await singleFactorAuth?.connected() ?? false
+                   result(connected)
                 } catch {
                     result(FlutterError(
                                  code: (error as NSError).domain,
