@@ -5,20 +5,37 @@
 Pod::Spec.new do |s|
 s.name             = 'single_factor_auth_flutter'
 s.version          = '0.0.1'
-s.summary          = 'A new Flutter plugin project.'
-s.description      = <<-DESC
-        A new Flutter plugin project.
+s.
+summary = 'A new Flutter plugin project.'
+s.
+description =
+<<-
 DESC
-        s.homepage         = 'http://example.com'
-s.license          = { :file => '../LICENSE' }
-s.author           = { 'Your Company' => 'email@example.com' }
-s.source           = { :path => '.' }
-s.source_files = 'Classes/**/*'
+        A
+new
+Flutter plugin
+project.
+DESC
+        s
+.
+homepage = 'http://example.com'
+s.
+license = {:file => '../LICENSE'}
+s.
+author = {'Your Company' => 'email@example.com'}
+s.
+source = {:path => '.'}
+s.
+source_files = 'Classes/**/*'
 s.dependency 'Flutter'
-s.dependency 'SingleFactorAuth', '9.0.3'
-s.platform = :ios, '14.0'
+s.dependency 'SingleFactorAuth', '9.0.4'
+s.
+platform =
+:ios, '14.0'
 
 # Flutter.framework does not contain a i386 slice.
-s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
-s.swift_version = '5.0'
+s.
+pod_target_xcconfig = {'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386'}
+s.
+swift_version = '5.0'
 end

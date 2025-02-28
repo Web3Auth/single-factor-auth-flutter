@@ -1,5 +1,5 @@
-import 'dart:collection';
 
+import 'dart:collection';
 import 'enums.dart';
 
 class LoginParams {
