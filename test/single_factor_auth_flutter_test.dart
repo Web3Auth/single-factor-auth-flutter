@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:single_factor_auth_flutter/single_factor_auth_flutter_platform_interface.dart';
-import 'package:single_factor_auth_flutter/single_factor_auth_flutter_method_channel.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
+import 'package:single_factor_auth_flutter/single_factor_auth_flutter_method_channel.dart';
+import 'package:single_factor_auth_flutter/single_factor_auth_flutter_platform_interface.dart';
 
 class MockSingleFactAuthFlutterPlatform
     with MockPlatformInterfaceMixin
@@ -19,12 +20,12 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    SingleFactAuthFlutter SingleFactorAuthFlutterPlugin =
-        SingleFactAuthFlutter();
+    SingleFactorAuthFlutter singleFactorAuthFlutterPlugin =
+        SingleFactorAuthFlutter();
     MockSingleFactAuthFlutterPlatform fakePlatform =
         MockSingleFactAuthFlutterPlatform();
     SingleFactAuthFlutterPlatform.instance = fakePlatform;
 
-    expect(await SingleFactorAuthFlutterPlugin.getPlatformVersion(), '42');
+    expect(await singleFactorAuthFlutterPlugin.getPlatformVersion(), '42');
   });
 }
