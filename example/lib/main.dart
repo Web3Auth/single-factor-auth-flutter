@@ -11,7 +11,6 @@ import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
 import './utils.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
