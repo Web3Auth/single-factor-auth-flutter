@@ -44,14 +44,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> init() async {
-    await _singleFactorAuthFlutterPlugin.init(Web3AuthOptions(
-        network: web3AuthNetwork,
-        clientId: 'YOUR_CLIENT_ID',
-        sessionTime: 86400));
+    try {
+      await _singleFactorAuthFlutterPlugin.init(Web3AuthOptions(
+          network: web3AuthNetwork,
+          clientId: 'YOUR_CLIENT_ID',
+          sessionTime: 86400));
+
+      await _singleFactorAuthFlutterPlugin.initialize();
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> getSessionData() async {
-    log("getSessionData() called");
     final SessionData? sessionData =
         await _singleFactorAuthFlutterPlugin.getSessionData();
     if (sessionData?.publicAddress != null) {
