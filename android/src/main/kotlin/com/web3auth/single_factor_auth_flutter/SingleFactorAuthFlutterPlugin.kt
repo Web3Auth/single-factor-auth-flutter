@@ -83,7 +83,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "initialize" -> {
                 try {
-                    val sfaKey = singleFactorAuth.initialize(context)
+                    singleFactorAuth.initialize(context).get()
                     Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "#initialize")
                     return null
                 } catch (e: Throwable) {
@@ -120,7 +120,6 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
                         "#getSessionData"
                     )
-                    singleFactorAuth.initialize(context).get()
                     var sessionData = singleFactorAuth.getSessionData()
                     val loginResult: SessionData? = sessionData
                     return if (loginResult == null) {

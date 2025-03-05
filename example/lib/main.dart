@@ -11,6 +11,7 @@ import 'package:single_factor_auth_flutter/single_factor_auth_flutter.dart';
 import './utils.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -57,7 +58,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> getSessionData() async {
-    log("getSessionData() called");
     final SessionData? sessionData =
         await _singleFactorAuthFlutterPlugin.getSessionData();
     if (sessionData?.publicAddress != null) {
