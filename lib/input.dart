@@ -82,7 +82,7 @@ class Web3AuthOptions {
 }
 
 String getWalletSdkUrl(BuildEnv? buildEnv) {
-  const String walletServicesVersion = "v3";
+  const String walletServicesVersion = "v4";
   switch (buildEnv) {
     case BuildEnv.staging:
       return "https://staging-wallet.web3auth.io/$walletServicesVersion";
