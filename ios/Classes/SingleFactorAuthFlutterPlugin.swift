@@ -64,7 +64,6 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 
                 self.singleFactorAuth = singleFactorAuth
                 return result(nil)
-                break
                 
             case "initialize":
                 do {
@@ -120,11 +119,14 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
 
             case "getSessionData":
                 do {
-                    try await singleFactorAuth?.initialize()
-                    let sessionData = try await singleFactorAuth?.getSessionData()
-                    let resultData = try encoder.encode(sessionData)
-                    let resultJson = String(decoding: resultData, as: UTF8.self)
-                    return result(resultJson)
+                    let sessionData = singleFactorAuth?.getSessionData()
+                    if let sessionData = sessionData {
+                        let resultData = try encoder.encode(sessionData)
+                        let resultJson = String(decoding: resultData, as: UTF8.self)
+                        return result(resultJson)
+                    } else {
+                        return result(nil)
+                    }
                 } catch {
                     result(FlutterError(
                                  code: (error as NSError).domain,
@@ -135,16 +137,8 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 break
 
             case "connected":
-                do {
-                   let connected = try await singleFactorAuth?.connected() ?? false
-                   result(connected)
-                } catch {
-                    result(FlutterError(
-                                 code: (error as NSError).domain,
-                                 message: error.localizedDescription,
-                                 details: String(describing: error)
-                           ))
-                }
+                let connected = singleFactorAuth?.connected() ?? false
+                result(connected)
                 break
 
             case "showWalletUI":
