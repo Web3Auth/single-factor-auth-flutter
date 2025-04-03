@@ -55,7 +55,8 @@ public class SingleFactorAuthFlutterPlugin: NSObject, FlutterPlugin {
                 web3AuthOptions = Web3AuthOptions(
                     clientId: params.clientId,
                     web3AuthNetwork: self.getNetwork(params.network),
-                    sessionTime: params.sessionTime ?? 86400
+                    sessionTime: params.sessionTime ?? 86400,
+                    redirectUrl: params.redirectUrl
                 )
                 
                 let singleFactorAuth =  try SingleFactorAuth(
@@ -224,6 +225,7 @@ struct InitParams: Codable {
     var network: String
     var clientId: String
     var sessionTime: Int? = 86400
+    var redirectUrl: String? = nil
 }
 
 struct getTorusKeyParams: Codable {

@@ -51,7 +51,7 @@ class Web3AuthOptions {
   WhiteLabelData? whiteLabel;
   Map<String, String>? originData;
   BuildEnv buildEnv;
-  String redirectUrl;
+  String? redirectUrl;
   String? walletSdkUrl;
 
   Web3AuthOptions({
@@ -61,7 +61,7 @@ class Web3AuthOptions {
     this.whiteLabel,
     this.originData,
     BuildEnv? buildEnv,
-    required this.redirectUrl,
+    this.redirectUrl,
     String? walletSdkUrl,
   })  : buildEnv = buildEnv ?? BuildEnv.production,
         walletSdkUrl =
