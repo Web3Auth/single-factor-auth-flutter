@@ -102,6 +102,9 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
 
             "connect" -> {
                 try {
+                    if(!::singleFactorAuth.isInitialized) {
+                        Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "SFA not initialized.")
+                    }
                     val initArgs = call.arguments<String>()
                     val loginParams = gson.fromJson(initArgs, LoginParams::class.java)
                     val sessionData = singleFactorAuth.connect(loginParams, activity!!)
@@ -138,7 +141,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
                         gson.toJson(loginResult)
                     }
                 } catch (e: Throwable) {
-                    Log.e(
+                    Log.d(
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
                         "Error retrieving session data",
                         e
