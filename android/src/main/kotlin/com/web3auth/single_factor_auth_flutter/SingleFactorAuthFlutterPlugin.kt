@@ -73,11 +73,22 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
             "getPlatformVersion" -> return "Android ${android.os.Build.VERSION.RELEASE}"
 
             "init" -> {
-                val initArgs = call.arguments<String>()
-                val params = gson.fromJson(initArgs, SFAOptions::class.java)
-                web3AuthOptions =
-                    Web3AuthOptions(params.clientId, getNetwork(params.network), params.sessionTime)
-                singleFactorAuth = SingleFactorAuth(web3AuthOptions, context)
+                try {
+                    val initArgs = call.arguments<String>()
+                    val params = gson.fromJson(initArgs, SFAOptions::class.java)
+                    Log.d("SingleFactorAuth", "Params parsed successfully: $params")
+
+                    web3AuthOptions = Web3AuthOptions(
+                        params.clientId,
+                        getNetwork(params.network),
+                        params.sessionTime
+                    )
+
+                    singleFactorAuth = SingleFactorAuth(web3AuthOptions, context)
+                    Log.d("SingleFactorAuth", "SingleFactorAuth initialized successfully")
+                } catch (e: Exception) {
+                    Log.d("SingleFactorAuth", "Initialization failed: ${e.message}")
+                }
                 return null
             }
 
@@ -93,6 +104,9 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             "connect" -> {
                 try {
+                    if(!::singleFactorAuth.isInitialized) {
+                        Log.d("${SingleFactorAuthFlutterPlugin::class.qualifiedName}", "SFA not initialized.")
+                    }
                     val initArgs = call.arguments<String>()
                     val loginParams = gson.fromJson(initArgs, LoginParams::class.java)
                     val sessionData = singleFactorAuth.connect(loginParams, context)
@@ -128,7 +142,7 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler {
                         gson.toJson(loginResult)
                     }
                 } catch (e: Throwable) {
-                    Log.e(
+                    Log.d(
                         "${SingleFactorAuthFlutterPlugin::class.qualifiedName}",
                         "Error retrieving session data",
                         e

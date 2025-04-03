@@ -2,7 +2,7 @@
 class SessionData {
   final String privateKey;
   final String publicAddress;
-  final Session_Data? signatures;
+  final List<String>? signatures;
   final UserInfo? userInfo;
 
   SessionData({
@@ -15,10 +15,10 @@ class SessionData {
   // Factory constructor to create an instance from a JSON map
   factory SessionData.fromJson(Map<String, dynamic> json) {
     return SessionData(
-      privateKey: json['privateKey'],
+      privateKey: json['privKey'],
       publicAddress: json['publicAddress'],
       signatures: json['signatures'] != null
-          ? Session_Data.fromJson(json['signatures'])
+          ? List<String>.from(json['signatures'])
           : null,
       userInfo:
           json['userInfo'] != null ? UserInfo.fromJson(json['userInfo']) : null,
@@ -29,7 +29,7 @@ class SessionData {
     return {
       'privateKey': privateKey,
       'publicAddress': publicAddress,
-      'signatures': signatures?.toJson(),
+      'signatures': signatures,
       'userInfo': userInfo?.toJson(),
     };
   }
@@ -143,38 +143,6 @@ extension LoginTypeExtension on LoginType {
       (type) => type.toJson() == value,
       orElse: () => throw ArgumentError('Invalid LoginType: $value'),
     );
-  }
-}
-
-class Session_Data {
-  final List<SessionToken> sessionTokenData;
-  final String sessionAuthKey;
-
-  Session_Data({
-    required this.sessionTokenData,
-    required this.sessionAuthKey,
-  });
-
-  factory Session_Data.fromJson(Map<String, dynamic> json) {
-    return Session_Data(
-      sessionTokenData: (json['sessionTokenData'] as List<dynamic>)
-          .map((item) => SessionToken.fromJson(item as Map<String, dynamic>))
-          .toList(),
-      sessionAuthKey: json['sessionAuthKey'] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'sessionTokenData':
-          sessionTokenData.map((token) => token.toJson()).toList(),
-      'sessionAuthKey': sessionAuthKey,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'Session_Data(sessionTokenData: $sessionTokenData, sessionAuthKey: $sessionAuthKey)';
   }
 }
 
