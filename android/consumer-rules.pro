@@ -14,3 +14,29 @@
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
+
+# Keep the UserInfo class
+-keep class com.web3auth.singlefactorauth.types.UserInfo { *; }
+-keepnames class com.web3auth.singlefactorauth.types.UserInfo { *; }
+
+# Keep LoginType enum
+-keep enum com.web3auth.singlefactorauth.types.LoginType { *; }
+-keepnames enum com.web3auth.singlefactorauth.types.LoginType { *; }
+
+# Keep TorusGenericContainer class
+-keep class com.web3auth.singlefactorauth.types.TorusGenericContainer { *; }
+-keepnames class com.web3auth.singlefactorauth.types.TorusGenericContainer { *; }
+
+# Keep org.json library
+-keep class org.json.** { *; }
+-keepnames class org.json.** { *; }
+
+# Keep Gson (if used within the SDK's Android part)
+-keep class com.google.gson.** { *; }
+-keepnames class com.google.gson.** { *; }
+
+# Keep necessary attributes
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
