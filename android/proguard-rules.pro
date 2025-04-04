@@ -41,6 +41,7 @@
 
 # Keep Gson-related classes (usually required)
 -keep class com.google.gson.** { *; }
+-keepnames class com.google.gson.** { *; }
 -dontwarn com.google.gson.**
 
 # Keep classes used by reflection (especially if you use Gson or any other serializer)
@@ -86,4 +87,23 @@
 
 # Suppress warnings related to missing classes (if any)
 -dontwarn org.bouncycastle.**
+
+# Keep the LoginType enum
+-keep enum com.web3auth.singlefactorauth.types.LoginType { *; }
+
+-keepnames class com.web3auth.single_factor_auth_flutter.** { *; }
+-keepnames class com.web3auth.singlefactorauth.types.UserInfo { *; }
+-keepnames enum com.web3auth.singlefactorauth.types.LoginType { *; }
+-keepnames class com.web3auth.singlefactorauth.types.TorusGenericContainer { *; }
+
+# Keep the specific JSON library classes being used (org.json in this case)
+-keep class org.json.** { *; }
+-keepnames class org.json.** { *; }
+
+# Keep attributes related to generics and annotations for Gson and potentially other reflection
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+
 
