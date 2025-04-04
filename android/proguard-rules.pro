@@ -12,6 +12,30 @@
 -dontwarn org.torusresearch.fetchnodedetails.**
 -dontwarn org.torusresearch.**
 
+-keep class com.web3auth.singlefactorauth.types.SessionData { *; }
+-keep class com.web3auth.singlefactorauth.types.UserInfo { *; }
+-keep class com.web3auth.singlefactorauth.types.TorusGenericContainer { *; }
+-keepclassmembers class com.web3auth.singlefactorauth.types.TorusGenericContainer {
+    <fields>;
+}
+-keepclassmembers class com.web3auth.singlefactorauth.types.UserInfo {
+    <fields>;
+}
+-keepclassmembers class com.web3auth.singlefactorauth.types.SessionData {
+    <fields>;
+}
+-keep class * implements java.io.Serializable { *; }
+-keepclassmembers class kotlin.jvm.internal.** {
+    *;
+}
+-keepclassmembers class kotlinx.coroutines.** {
+    *;
+}
+-keepattributes Signature, RuntimeVisibleAnnotations, EnclosingMethod
+-keepattributes *Annotation*
+-keep class com.web3auth.single_factor_auth_flutter.** { *; }
+-dontwarn java.lang.reflect.**
+
 # Prevent Gson from stripping necessary attributes
 -keepattributes Signature, RuntimeVisibleAnnotations
 
