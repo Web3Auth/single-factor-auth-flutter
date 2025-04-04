@@ -3,6 +3,7 @@ package com.web3auth.single_factor_auth_flutter
 import android.app.Activity
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -23,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.torusresearch.fetchnodedetails.types.Web3AuthNetwork
+import java.io.Serializable
 
 /** SingleFactorAuthFlutterPlugin */
 class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
@@ -239,15 +241,17 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
     }
 }
 
+@Keep
 data class WalletServicesJson(
-    val chainConfig: ChainConfig,
-    val path: String? = "wallet"
-)
+    @Keep val chainConfig: ChainConfig,
+    @Keep val path: String? = "wallet"
+): Serializable
 
+@Keep
 data class RequestJson(
-    val chainConfig: ChainConfig,
-    val method: String,
-    val requestParams: List<Any?>,
-    val path: String? = "wallet/request",
-    val appState: String? = null
-)
+    @Keep val chainConfig: ChainConfig,
+    @Keep val method: String,
+    @Keep val requestParams: List<Any?>,
+    @Keep val path: String? = "wallet/request",
+    @Keep val appState: String? = null
+) : Serializable
