@@ -8,4 +8,3 @@
 
 -keep class org.torusresearch.fetchnodedetails.types.** { *; }
 -keepclassmembers enum * { *; }
--printmapping mapping.txt
