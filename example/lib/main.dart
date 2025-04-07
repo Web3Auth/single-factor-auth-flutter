@@ -45,10 +45,18 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> init() async {
     try {
+      String redirectUrl;
+      if (Platform.isAndroid) {
+        redirectUrl = 'torusapp://org.torusresearch.flutter.web3authexample';
+      } else if (Platform.isIOS) {
+        redirectUrl = 'com.web3auth.flutter.web3authflutterexample://auth';
+      } else {
+        throw UnKnownException('Unknown platform');
+      }
       await _singleFactorAuthFlutterPlugin.init(Web3AuthOptions(
           network: web3AuthNetwork,
-          clientId: 'YOUR_CLIENT_ID',
-          sessionTime: 86400));
+          clientId: 'BHgArYmWwSeq21czpcarYh0EVq2WWOzflX-NTK-tY1-1pauPzHKRRLgpABkmYiIV_og9jAvoIxQ8L3Smrwe04Lw',
+          sessionTime: 86400, redirectUrl: redirectUrl,));
 
       await _singleFactorAuthFlutterPlugin.initialize();
     } catch (e) {
@@ -127,6 +135,10 @@ class _MyAppState extends State<MyApp> {
                       onPressed: () => _initialize(),
                       child: const Text('Get Session Response'),
                     ),
+                    ElevatedButton(
+                      onPressed: _showWalletUI,
+                      child: const Text('showWalletUI'),
+                    ),
                   ],
                 ),
               ),
@@ -199,5 +211,21 @@ class _MyAppState extends State<MyApp> {
   //Logout example
   Future<void> logout() {
     return _singleFactorAuthFlutterPlugin.logout();
+  }
+
+  void _showWalletUI() {
+    try {
+      _singleFactorAuthFlutterPlugin.showWalletUI(
+        ChainConfig(
+          chainId: "0x89",
+          rpcTarget:
+              "https://mainnet.infura.io/v3/daeee53504be4cd3a997d4f2718d33e0",
+        ),
+      );
+    } on UserCancelledException {
+      log("User cancelled.");
+    } on UnKnownException {
+      log("Unknown exception occurred");
+    }
   }
 }

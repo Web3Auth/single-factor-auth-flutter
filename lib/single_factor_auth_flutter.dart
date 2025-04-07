@@ -25,7 +25,7 @@ class SingleFactorAuthFlutter {
     try {
       await _channel.invokeMethod('initialize');
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
@@ -39,7 +39,7 @@ class SingleFactorAuthFlutter {
       );
       return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
@@ -51,7 +51,7 @@ class SingleFactorAuthFlutter {
       }
       return SessionData.fromJson(jsonDecode(sessionData));
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
@@ -59,7 +59,7 @@ class SingleFactorAuthFlutter {
     try {
       await _channel.invokeMethod('logout');
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
@@ -67,11 +67,65 @@ class SingleFactorAuthFlutter {
     try {
       return await _channel.invokeMethod('connected');
     } on PlatformException catch (e) {
-      throw _hanldePlatformException(e);
+      throw _handlePlatformException(e);
     }
   }
 
-  Exception _hanldePlatformException(PlatformException e) {
+  Future<void> showWalletUI(
+    ChainConfig chainConfig, {
+    String path = "wallet",
+  }) async {
+    try {
+      Map<String, dynamic> chainConfigJson = chainConfig.toJson();
+      chainConfigJson.removeWhere((key, value) => value == null);
+
+      Map<String, dynamic> walletServicesJson = {};
+      walletServicesJson["chainConfig"] = chainConfigJson;
+      walletServicesJson["path"] = path;
+
+      await _channel.invokeMethod(
+        'showWalletUI',
+        jsonEncode(walletServicesJson),
+      );
+
+      return;
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
+  Future<SignResponse> request(
+    ChainConfig chainConfig,
+    String method,
+    List<dynamic> requestParams, {
+    String path = "wallet/request",
+    String? appState,
+  }) async {
+    try {
+      Map<String, dynamic> chainConfigJson = chainConfig.toJson();
+      chainConfigJson.removeWhere((key, value) => value == null);
+
+      List<String> modifiedRequestParams =
+          requestParams.map((param) => jsonEncode(param)).toList();
+
+      Map<String, dynamic> requestJson = {};
+      requestJson["chainConfig"] = chainConfigJson;
+      requestJson["method"] = method;
+      requestJson["requestParams"] = modifiedRequestParams;
+      requestJson["path"] = path;
+      if (appState != null) {
+        requestJson["appState"] = appState;
+      }
+
+      final response =
+          await _channel.invokeMethod('request', jsonEncode(requestJson));
+      return SignResponse.fromJson(jsonDecode(response));
+    } on PlatformException catch (e) {
+      throw _handlePlatformException(e);
+    }
+  }
+
+  Exception _handlePlatformException(PlatformException e) {
     switch (e.code) {
       case "UserCancelledException":
         throw UserCancelledException();
