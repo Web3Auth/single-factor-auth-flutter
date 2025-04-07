@@ -5,12 +5,41 @@
 -keep class com.web3auth.singlefactorauth.types.** { *; }
 
 -keep class org.torusresearch.fetchnodedetails.** { *; }
--keep class org.torusresearch.fetchnodedetails.FetchNodeDetails { *; }
--keep class org.torusresearch.fetchnodedetails.types.NodeDetails { *; }
--keep class org.torusresearch.fetchnodedetails.types.TorusNodePub { *; }
 -keep class org.torusresearch.fetchnodedetails.** { public *; }
+-keep class org.torusresearch.fetchnodedetails.FetchNodeDetails {
+    public *;
+}
+-keep class org.torusresearch.fetchnodedetails.types.NodeDetails {
+    <fields>;
+    <methods>;
+}
+-keep class org.torusresearch.fetchnodedetails.types.TorusNodePub {
+    <fields>;
+    <methods>;
+}
+-keep class org.torusresearch.fetchnodedetails.types.** {
+    <fields>;
+    <methods>;
+}
 -dontwarn org.torusresearch.fetchnodedetails.**
 -dontwarn org.torusresearch.**
+
+-keepattributes Signature
+-keepattributes *Annotation*
+-keepattributes EnclosingMethod
+-keepattributes InnerClasses
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# Keep generic types used via TypeToken
+-keepclassmembers class * {
+    ** fromJson(...);
+}
+
+# Prevent CompletableFuture-related class stripping
+-dontwarn java.util.concurrent.CompletableFuture
+
 
 -keep class com.web3auth.singlefactorauth.types.SessionData { *; }
 -keep class com.web3auth.singlefactorauth.types.UserInfo { *; }

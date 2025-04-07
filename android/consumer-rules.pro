@@ -9,6 +9,8 @@
 # Preserve enums and their members (e.g., LoginType)
 -keepclassmembers enum com.web3auth.singlefactorauth.** { *; }
 -keepclassmembers enum com.web3auth.singlefactorauth.types.** { *; }
+-keep class org.torusresearch.fetchnodedetails.** { *; }
+-keepclassmembers class org.torusresearch.fetchnodedetails.** { *; }
 
 # Prevent Gson from stripping interface information from TypeAdapterFactory, JsonSerializer, and JsonDeserializer
 -keep class * implements com.google.gson.TypeAdapterFactory
@@ -43,9 +45,9 @@
 
 -keep class org.bouncycastle.** { *; }
 -keepnames class org.bouncycastle.** { *; }
--keep class net.i2p.crypto.eddsa.** { *; } # If your SDK uses EdDSA
+-keep class net.i2p.crypto.eddsa.** { *; }
 -keepnames class net.i2p.crypto.eddsa.** { *; }
--keep class org.conscrypt.** { *; } # Another common security provider
+-keep class org.conscrypt.** { *; }
 -keepnames class org.conscrypt.** { *; }
 -keep class javax.net.ssl.* { *; }
 -keepnames class javax.net.ssl.* { *; }
