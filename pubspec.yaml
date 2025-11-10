@@ -1,6 +1,6 @@
 name: single_factor_auth_flutter
 description: Single Factor Auth Flutter SDK
-version: 7.0.1
+version: 7.0.2
 homepage: "https://github.com/web3auth/single-factor-auth-flutter"
 
 environment:
