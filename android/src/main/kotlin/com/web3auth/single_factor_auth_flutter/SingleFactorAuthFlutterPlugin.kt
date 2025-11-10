@@ -81,15 +81,19 @@ class SingleFactorAuthFlutterPlugin : FlutterPlugin, MethodCallHandler, Activity
             "getPlatformVersion" -> return "Android ${android.os.Build.VERSION.RELEASE}"
 
             "init" -> {
-                val initArgs = call.arguments<String>()
-                val params = gson.fromJson(initArgs, SFAOptions::class.java)
-                web3AuthOptions =
-                    Web3AuthOptions(
-                        params.clientId, getNetwork(params.network), params.sessionTime,
-                        redirectUrl = Uri.parse(params.redirectUrl)
-                    )
-                singleFactorAuth = SingleFactorAuth(web3AuthOptions, activity!!)
-                return null
+                try {
+                    val initArgs = call.arguments<String>()
+                    val params = gson.fromJson(initArgs, SFAOptions::class.java)
+                    web3AuthOptions =
+                        Web3AuthOptions(
+                            params.clientId, getNetwork(params.network), params.sessionTime,
+                            redirectUrl = Uri.parse(params.redirectUrl)
+                        )
+                    singleFactorAuth = SingleFactorAuth(web3AuthOptions, activity!!)
+                    return null
+                } catch (e: Throwable) {
+                    throw Error("INIT_ERROR: SFA not initialized: ${e.message}", e)
+                }
             }
 
             "initialize" -> {
